@@ -833,6 +833,7 @@ start:
     }
 
     do {
+      printf("sendmsg(uv__stream_fd(stream), &msg, 0);\n");
       n = sendmsg(uv__stream_fd(stream), &msg, 0);
     }
 #if defined(__APPLE__)
@@ -849,8 +850,10 @@ start:
   } else {
     do {
       if (iovcnt == 1) {
+    	printf("write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);\n");
         n = write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);
       } else {
+    	printf("n = writev(uv__stream_fd(stream), iov, iovcnt);\n");
         n = writev(uv__stream_fd(stream), iov, iovcnt);
       }
     }
