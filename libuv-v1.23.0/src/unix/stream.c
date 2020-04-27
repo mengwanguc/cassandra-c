@@ -1402,7 +1402,8 @@ static void uv__read(uv_stream_t* stream) {
 
     if (!is_ipc) {
       do {
-    	printf("uv__read calling read system call...\n");
+    	printf("\n uv__read calling read system call...\n");
+    	backtrace_meng();
         nread = read(uv__stream_fd(stream), buf.base, buf.len);
         printf("read finished, nread:%d\n\n", nread);
       }
