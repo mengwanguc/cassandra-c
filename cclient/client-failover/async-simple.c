@@ -71,7 +71,8 @@ int main(int argc, char* argv[]) {
     /* Build statement and execute query */
 //    const char* query = "SELECT release_version FROM system.local";
     int i = 0;
-    for (i = 0; i < 1000; i++) {
+    sleep(5);
+    for (i = 0; i < 100; i++) {
       char query[100];
       snprintf(query, 100, "SELECT name FROM mittcpu.students WHERE id = %d", i+1);
       CassStatement* statement = cass_statement_new(query, 0);
