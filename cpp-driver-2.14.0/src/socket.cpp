@@ -376,14 +376,12 @@ int32_t Socket::write_and_flush(SocketRequest* request) {
 size_t Socket::flush() {
   if (pending_writes_.is_empty()) return 0;
 
-  printf("calling Socket::flush()...\n");
   return pending_writes_.back()->flush();
 }
 
 size_t Socket::flush_mittcpu() {
   if (pending_writes_.is_empty()) return 0;
 
-  printf("calling Socket::flush_mittcpu()...\n");
   return pending_writes_.back()->flush_mittcpu();
 }
 
