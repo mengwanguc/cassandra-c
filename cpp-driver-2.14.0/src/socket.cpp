@@ -76,8 +76,8 @@ size_t SocketWrite::flush_mittcpu() {
 
     is_flushed_ = true;
     uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
-    printf("	@meng: SocketWrite::flush_mittcpu(): now will do uv_write...\n");
-    uv_write(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write);
+    printf("	@meng: SocketWrite::flush_mittcpu(): now will do uv_write_mittcpu...\n");
+    uv_write_mittcpu(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write);
   }
   return total;
 }
