@@ -1424,9 +1424,9 @@ static void uv__read(uv_stream_t* stream) {
     }
 
     if (nread < 0) {
-      if (errno == EBUSY) {
-    	  printf("	@meng: Got EBUSYYYYYYYYY\n");
-    	  backtrace_meng();
+      {
+    	  printf("	@meng: errno:%d\n", errno);
+//    	  backtrace_meng();
       }
       /* Error */
       if (errno == EAGAIN || errno == EWOULDBLOCK) {
