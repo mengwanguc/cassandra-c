@@ -260,6 +260,9 @@ void RequestProcessor::notify_token_map_updated(const TokenMap::Ptr& token_map) 
 void RequestProcessor::process_request(const RequestHandler::Ptr& request_handler) {
   request_handler->inc_ref(); // Queue reference
 
+  printf("request_handler.deadline:%d  get.deadline:%d\n",
+		  	 request_handler->deadline, request_handler.get()->deadline);
+
   if (request_queue_->enqueue(request_handler.get())) {
     request_count_.fetch_add(1);
     // Only signal the request queue if it's not already processing requests.
