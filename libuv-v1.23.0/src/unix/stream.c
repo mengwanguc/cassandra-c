@@ -1404,6 +1404,7 @@ static void uv__read(uv_stream_t* stream) {
       do {
     	printf("uv__read calling read system call...\n");
         nread = read(uv__stream_fd(stream), buf.base, buf.len);
+        printf("read finished, nread:%d\n\n", nread);
       }
       while (nread < 0 && errno == EINTR);
     } else {
