@@ -84,27 +84,6 @@ size_t SocketWrite::flush_mittcpu() {
 
 
 
-size_t SocketWrite::flush() {
-  size_t total = 0;
-  if (!is_flushed_ && !buffers_.empty()) {
-    UvBufVec bufs;
-
-    bufs.reserve(buffers_.size());
-
-    for (BufferVec::const_iterator it = buffers_.begin(), end = buffers_.end(); it != end; ++it) {
-      total += it->size();
-      bufs.push_back(uv_buf_init(const_cast<char*>(it->data()), it->size()));
-    }
-
-    is_flushed_ = true;
-    uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
-    uv_write(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write);
-  }
-  return total;
-}
-
-
-
 SocketHandler::~SocketHandler() {
   while (!buffer_reuse_list_.empty()) {
     uv_buf_t buf = buffer_reuse_list_.top();
@@ -150,6 +129,7 @@ public:
       , encrypted_size_(0) {}
 
   virtual size_t flush();
+  virtual size_t flush_mittcpu();
 
 private:
   void encrypt();
@@ -180,6 +160,28 @@ size_t SslSocketWrite::flush() {
   }
   return total;
 }
+
+
+size_t SslSocketWrite::flush_mittcpu() {
+  size_t total = 0;
+  if (!is_flushed_ && !buffers_.empty()) {
+    rb::RingBuffer::Position prev_pos = ssl_session_->outgoing().write_position();
+
+    encrypt();
+
+    SmallVector<uv_buf_t, SSL_ENCRYPTED_BUFS_COUNT> bufs;
+    total = encrypted_size_ = ssl_session_->outgoing().peek_multiple(prev_pos, &bufs);
+
+    LOG_TRACE("Sending %u encrypted bytes", static_cast<unsigned int>(encrypted_size_));
+
+    uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
+    uv_write(&req_, sock_stream, bufs.data(), bufs.size(), SslSocketWrite::on_write);
+
+    is_flushed_ = true;
+  }
+  return total;
+}
+
 
 void SslSocketWrite::encrypt() {
   char buf[SSL_WRITE_SIZE];
