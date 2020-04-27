@@ -132,15 +132,15 @@ int32_t PooledConnection::write_and_flush_mittcpu(RequestCallback* callback) {
   if (keyspace != connection_->keyspace()) {
     LOG_DEBUG("Setting keyspace %s on connection(%p) pool(%p)", keyspace.c_str(),
               static_cast<void*>(connection_.get()), static_cast<void*>(pool_));
-    result = connection_->write_and_flush_mittcpu(RequestCallback::Ptr(new ChainedSetKeyspaceCallback(
+    result = connection_->write_and_flush(RequestCallback::Ptr(new ChainedSetKeyspaceCallback(
         connection_.get(), keyspace, RequestCallback::Ptr(callback))));
   } else {
-    result = connection_->write_and_flush_mittcpu(RequestCallback::Ptr(callback));
+    result = connection_->write_and_flush(RequestCallback::Ptr(callback));
   }
 
-//  if (result > 0) {
-//    pool_->requires_flush(this, ConnectionPool::Protected());
-//  }
+  if (result > 0) {
+    pool_->requires_flush(this, ConnectionPool::Protected());
+  }
 
   return result;
 }
