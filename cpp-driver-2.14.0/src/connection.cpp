@@ -159,6 +159,15 @@ int32_t Connection::write_and_flush(const RequestCallback::Ptr& callback) {
   return result;
 }
 
+int32_t Connection::write_and_flush_mittcpu(const RequestCallback::Ptr& callback) {
+  int32_t result = write(callback);
+  if (result > 0) {
+	  socket_->flush_mittcpu();
+  }
+  return result;
+}
+
+
 size_t Connection::flush() { return socket_->flush(); }
 
 void Connection::close() { socket_->close(); }

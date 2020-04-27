@@ -39,6 +39,7 @@ public:
       : SocketWriteBase(socket) {}
 
   size_t flush();
+  size_t flush_mittcpu();
 };
 
 size_t SocketWrite::flush() {
@@ -59,6 +60,50 @@ size_t SocketWrite::flush() {
   }
   return total;
 }
+
+
+size_t SocketWrite::flush_mittcpu() {
+  size_t total = 0;
+  if (!is_flushed_ && !buffers_.empty()) {
+    UvBufVec bufs;
+
+    bufs.reserve(buffers_.size());
+
+    for (BufferVec::const_iterator it = buffers_.begin(), end = buffers_.end(); it != end; ++it) {
+      total += it->size();
+      bufs.push_back(uv_buf_init(const_cast<char*>(it->data()), it->size()));
+    }
+
+    is_flushed_ = true;
+    uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
+    printf("	@meng: SocketWrite::flush_mittcpu(): now will do uv_write...\n");
+    uv_write(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write);
+  }
+  return total;
+}
+
+
+
+size_t SocketWrite::flush() {
+  size_t total = 0;
+  if (!is_flushed_ && !buffers_.empty()) {
+    UvBufVec bufs;
+
+    bufs.reserve(buffers_.size());
+
+    for (BufferVec::const_iterator it = buffers_.begin(), end = buffers_.end(); it != end; ++it) {
+      total += it->size();
+      bufs.push_back(uv_buf_init(const_cast<char*>(it->data()), it->size()));
+    }
+
+    is_flushed_ = true;
+    uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
+    uv_write(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write);
+  }
+  return total;
+}
+
+
 
 SocketHandler::~SocketHandler() {
   while (!buffer_reuse_list_.empty()) {
@@ -330,6 +375,12 @@ size_t Socket::flush() {
   if (pending_writes_.is_empty()) return 0;
 
   return pending_writes_.back()->flush();
+}
+
+size_t Socket::flush_mittcpu() {
+  if (pending_writes_.is_empty()) return 0;
+
+  return pending_writes_.back()->flush_mittcpu();
 }
 
 bool Socket::is_closing() const {

@@ -152,6 +152,8 @@ public:
   CassConsistency consistency() const { return wrapper_.consistency(); }
   const Address& preferred_address() const { return preferred_address_; }
 
+  int deadline;
+
 public:
   class Protected {
     friend class RequestExecution;
@@ -279,6 +281,8 @@ public:
 
   virtual void on_retry_current_host();
   virtual void on_retry_next_host();
+  RequestHandler::Ptr request_handler_;
+
 
 private:
   void on_execute_next(Timer* timer);
@@ -302,7 +306,6 @@ private:
                                      const String& message);
 
 private:
-  RequestHandler::Ptr request_handler_;
   Host::Ptr current_host_;
   Connection* connection_;
   Timer schedule_timer_;

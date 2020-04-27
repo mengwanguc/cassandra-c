@@ -159,6 +159,9 @@ public:
    */
   int32_t write_and_flush(const RequestCallback::Ptr& callback);
 
+
+  int32_t write_and_flush_mittcpu(const RequestCallback::Ptr& callback);
+
   /**
    * Flush all outstanding requests.
    */

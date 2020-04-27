@@ -251,6 +251,8 @@ public:
    */
   virtual size_t flush() = 0;
 
+  virtual size_t flush_mittcpu() = 0;
+
 protected:
   static void on_write(uv_write_t* req, int status);
   void handle_write(uv_write_t* req, int status);
@@ -319,6 +321,10 @@ public:
    * Flush all outstanding requests.
    */
   size_t flush();
+
+
+  size_t flush_mittcpu();
+
 
   /**
    * Determine if the socket is closing.

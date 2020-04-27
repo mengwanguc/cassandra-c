@@ -55,6 +55,9 @@ public:
    */
   int32_t write(RequestCallback* callback);
 
+
+  int32_t write_and_flush_mittcpu(RequestCallback* callback);
+
   /**
    * Flush pending writes.
    */

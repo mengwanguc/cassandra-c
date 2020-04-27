@@ -126,6 +126,26 @@ int32_t PooledConnection::write(RequestCallback* callback) {
   return result;
 }
 
+int32_t PooledConnection::write_and_flush_mittcpu(RequestCallback* callback) {
+  int32_t result;
+  const String& keyspace(pool_->keyspace());
+  if (keyspace != connection_->keyspace()) {
+    LOG_DEBUG("Setting keyspace %s on connection(%p) pool(%p)", keyspace.c_str(),
+              static_cast<void*>(connection_.get()), static_cast<void*>(pool_));
+    result = connection_->write_and_flush_mittcpu(RequestCallback::Ptr(new ChainedSetKeyspaceCallback(
+        connection_.get(), keyspace, RequestCallback::Ptr(callback))));
+  } else {
+    result = connection_->write_and_flush_mittcpu(RequestCallback::Ptr(callback));
+  }
+
+//  if (result > 0) {
+//    pool_->requires_flush(this, ConnectionPool::Protected());
+//  }
+
+  return result;
+}
+
+
 void PooledConnection::flush() {
   size_t bytes_flushed = connection_->flush();
 #ifdef CASS_INTERNAL_DIAGNOSTICS
