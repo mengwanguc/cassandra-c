@@ -333,7 +333,11 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
     PooledConnection::Ptr connection =
         manager_->find_least_busy(request_execution->current_host()->address());
     if (connection) {
-      int32_t result = connection->write(request_execution);
+      int32_t result = 0;
+      if (request_execution->request_handler_->deadline == 1)
+    	  connection->write(request_execution);
+      else
+    	  connection->write_and_flush_mittcpu(request_execution);
 
       if (result > 0) {
         is_done = true;
