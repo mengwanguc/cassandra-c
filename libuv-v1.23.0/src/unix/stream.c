@@ -1112,7 +1112,7 @@ start:
       size_t len = buf->len;
 
 
-      printf("n: %d, len:%d\n", n, len);c
+      printf("n: %d, len:%d\n", n, len);
 
       assert(req->write_index < req->nbufs);
 
