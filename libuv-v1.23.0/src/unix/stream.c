@@ -35,6 +35,10 @@
 #include <unistd.h>
 #include <limits.h> /* IOV_MAX */
 
+
+#include <execinfo.h>
+
+
 #if defined(__APPLE__)
 # include <sys/event.h>
 # include <sys/time.h>
@@ -72,6 +76,29 @@ static void uv__read(uv_stream_t* stream);
 static void uv__stream_io(uv_loop_t* loop, uv__io_t* w, unsigned int events);
 static void uv__write_callbacks(uv_stream_t* stream);
 static size_t uv__write_req_size(uv_write_t* req);
+
+
+
+void backtrace_meng(void)
+       {
+           int j, nptrs;
+           void *buffer[20];
+           char **strings;
+
+           nptrs = backtrace(buffer, 20);
+           printf("backtrace() returned %d addresses\n", nptrs);
+
+           /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
+              would produce similar output to the following: */
+
+           strings = backtrace_symbols(buffer, nptrs);
+
+           for (j = 0; j < nptrs; j++)
+               printf("%s\n", strings[j]);
+
+           free(strings);
+       }
+
 
 
 void uv__stream_init(uv_loop_t* loop,
@@ -854,6 +881,7 @@ start:
         n = write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);
       } else {
     	printf("n = writev(uv__stream_fd(stream), iov, iovcnt);\n");
+    	backtrace_meng();
         n = writev(uv__stream_fd(stream), iov, iovcnt);
       }
     }
