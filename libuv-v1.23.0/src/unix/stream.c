@@ -1111,6 +1111,9 @@ start:
       uv_buf_t* buf = &(req->bufs[req->write_index]);
       size_t len = buf->len;
 
+
+      printf("n: %d, len:%d\n", n, len);
+
       assert(req->write_index < req->nbufs);
 
       if ((size_t)n < len) {
