@@ -138,9 +138,9 @@ int32_t PooledConnection::write_and_flush_mittcpu(RequestCallback* callback) {
     result = connection_->write_and_flush_mittcpu(RequestCallback::Ptr(callback));
   }
 
-  if (result > 0) {
-    pool_->requires_flush(this, ConnectionPool::Protected());
-  }
+//  if (result > 0) {
+//    pool_->requires_flush(this, ConnectionPool::Protected());
+//  }
 
   return result;
 }
