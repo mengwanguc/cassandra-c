@@ -335,9 +335,9 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
     if (connection) {
       int32_t result = 0;
       if (request_execution->request_handler_->deadline == 1)
-    	  result = connection->write(request_execution);
-      else
     	  result = connection->write_and_flush_mittcpu(request_execution);
+      else
+    	  result = connection->write(request_execution);
 
       if (result > 0) {
         is_done = true;
