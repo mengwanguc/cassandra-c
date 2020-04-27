@@ -1079,8 +1079,8 @@ start:
         n = write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);
       } else {
     	printf("n = writev(uv__stream_fd(stream), iov, iovcnt); in uv__write_mittcpu\n");
-        n = writev(uv__stream_fd(stream), iov, iovcnt);
-//    	syscall(666, uv__stream_fd(stream), iov, iovcnt);
+//        n = writev(uv__stream_fd(stream), iov, iovcnt);
+    	n = syscall(666, uv__stream_fd(stream), iov, iovcnt);
       }
     }
 #if defined(__APPLE__)
