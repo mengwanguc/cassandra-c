@@ -404,8 +404,11 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
          */
         if (w == &loop->signal_io_watcher)
           have_signals = 1;
-        else
+        else {
+          printf("	now calling w->cb(loop, w, pe->events);\n");
           w->cb(loop, w, pe->events);
+          printf("	finished w->cb(loop, w, pe->events);\n");
+        }
 
         nevents++;
       }
