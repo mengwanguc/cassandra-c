@@ -219,7 +219,11 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
     return;
   }
 
+
+  printf("uv__io_poll is called...\n");
+
   while (!QUEUE_EMPTY(&loop->watcher_queue)) {
+	printf("while loop...\n");
     q = QUEUE_HEAD(&loop->watcher_queue);
     QUEUE_REMOVE(q);
     QUEUE_INIT(q);
@@ -267,6 +271,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
   real_timeout = timeout;
 
   for (;;) {
+	printf("for loop...\n");
     /* See the comment for max_safe_timeout for an explanation of why
      * this is necessary.  Executive summary: kernel bug workaround.
      */
