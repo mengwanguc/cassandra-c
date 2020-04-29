@@ -223,7 +223,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
   }
 
 
-  printf("uv__io_poll is called...\n");
+  printf("uv__io_poll is called... timout:%d\n", timeout);
 
   while (!QUEUE_EMPTY(&loop->watcher_queue)) {
 	printf("while loop...\n");
@@ -413,7 +413,6 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
           printf("	now calling w->cb(loop, w, pe->events);\n");
           w->cb(loop, w, pe->events);
           printf("	finished w->cb(loop, w, pe->events);\n");
-          backtrace_symbols_fd(&((void *)&w->cb), 1, 1);
         }
 
         nevents++;
