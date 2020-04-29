@@ -413,6 +413,9 @@ void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
 
 void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
   if (nread < 0) {
+	if (nread == -16) {
+		printf("Socket::handle_read: EBUSY!!!\n");
+	}
     if (nread != UV_EOF) {
       LOG_ERROR("Socket read error '%s'", uv_strerror(nread));
     }

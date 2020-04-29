@@ -1433,6 +1433,12 @@ static void uv__read(uv_stream_t* stream) {
     	  printf("	@meng: errno:%d\n", errno);
 //    	  backtrace_meng();
       }
+
+      if (errno == EBUSY) {
+    	  stream->read_cb(stream, -16, &buf);
+    	  return;
+      }
+
       /* Error */
       if (errno == EAGAIN || errno == EWOULDBLOCK) {
         /* Wait for the next one. */
