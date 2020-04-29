@@ -120,7 +120,6 @@ struct uv__io_s {
 typedef struct uv_buf_t {
   char* base;
   size_t len;
-  int msgid;
 } uv_buf_t;
 
 typedef int uv_file;
