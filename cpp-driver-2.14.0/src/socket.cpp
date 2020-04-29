@@ -41,7 +41,7 @@ public:
       : SocketWriteBase(socket) {}
 
   size_t flush();
-  size_t flush_mittcpu();
+  size_t flush_mittcpu(int stream);
 };
 
 size_t SocketWrite::flush() {
