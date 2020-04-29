@@ -72,6 +72,7 @@ class NopConnectionListener : public ConnectionListener {
 static NopConnectionListener nop_listener__;
 
 void ConnectionHandler::on_read(Socket* socket, ssize_t nread, const uv_buf_t* buf) {
+  printf("	ConnectionHandler::on_read is called...\n");
   connection_->on_read(buf->base, nread);
   free_buffer(buf);
 }

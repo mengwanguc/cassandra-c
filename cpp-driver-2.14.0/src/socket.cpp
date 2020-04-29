@@ -423,7 +423,6 @@ void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
   if (nread == -16) {
 		printf("Socket::handle_read: EBUSY!!!\n");
 		LOG_WARN("Socket read error '%s'", uv_strerror(nread));
-		backtrace_symbols_fd(&handler_->on_read, 1, 1);
 		defunct();
   }
   handler_->on_read(this, nread, buf);
