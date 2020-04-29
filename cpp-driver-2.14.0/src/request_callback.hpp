@@ -158,6 +158,8 @@ public:
   virtual void on_error(CassError code, const String& message) = 0;
 
 public:
+  int stream_;
+
   const Request* request() const { return wrapper_.request().get(); }
 
   bool skip_metadata() const;
@@ -202,7 +204,6 @@ private:
 private:
   const RequestWrapper wrapper_;
   ProtocolVersion protocol_version_;
-  int stream_;
   State state_;
   CassConsistency retry_consistency_;
   ScopedPtr<ResponseMessage> read_before_write_response_;

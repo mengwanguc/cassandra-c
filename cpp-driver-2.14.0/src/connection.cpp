@@ -163,7 +163,7 @@ int32_t Connection::write_and_flush(const RequestCallback::Ptr& callback) {
 int32_t Connection::write_and_flush_mittcpu(const RequestCallback::Ptr& callback) {
   int32_t result = write(callback);
   if (result > 0) {
-	  socket_->flush_mittcpu();
+	  socket_->flush_mittcpu(callback->stream_);
   }
   return result;
 }

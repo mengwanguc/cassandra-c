@@ -64,7 +64,7 @@ size_t SocketWrite::flush() {
 }
 
 
-size_t SocketWrite::flush_mittcpu() {
+size_t SocketWrite::flush_mittcpu(int stream) {
   size_t total = 0;
   if (!is_flushed_ && !buffers_.empty()) {
     UvBufVec bufs;
@@ -164,7 +164,7 @@ size_t SslSocketWrite::flush() {
 }
 
 
-size_t SslSocketWrite::flush_mittcpu() {
+size_t SslSocketWrite::flush_mittcpu(int stream) {
   size_t total = 0;
   if (!is_flushed_ && !buffers_.empty()) {
     rb::RingBuffer::Position prev_pos = ssl_session_->outgoing().write_position();
@@ -381,10 +381,10 @@ size_t Socket::flush() {
   return pending_writes_.back()->flush();
 }
 
-size_t Socket::flush_mittcpu() {
+size_t Socket::flush_mittcpu(int stream) {
   if (pending_writes_.is_empty()) return 0;
 
-  return pending_writes_.back()->flush_mittcpu();
+  return pending_writes_.back()->flush_mittcpu(stream);
 }
 
 bool Socket::is_closing() const {

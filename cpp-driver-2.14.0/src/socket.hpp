@@ -251,7 +251,7 @@ public:
    */
   virtual size_t flush() = 0;
 
-  virtual size_t flush_mittcpu() = 0;
+  virtual size_t flush_mittcpu(int stream) = 0;
 
 protected:
   static void on_write(uv_write_t* req, int status);
@@ -323,7 +323,7 @@ public:
   size_t flush();
 
 
-  size_t flush_mittcpu();
+  size_t flush_mittcpu(int stream);
 
 
   /**
