@@ -41,6 +41,9 @@
 #include <fcntl.h>
 #include <time.h>
 
+#include <execinfo.h>
+
+
 #define HAVE_IFADDRS_H 1
 
 #ifdef __UCLIBC__
@@ -271,7 +274,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
   real_timeout = timeout;
 
   for (;;) {
-	printf("for loop...\n");
+
     /* See the comment for max_safe_timeout for an explanation of why
      * this is necessary.  Executive summary: kernel bug workaround.
      */
@@ -308,6 +311,8 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
      * operating system didn't reschedule our process while in the syscall.
      */
     SAVE_ERRNO(uv__update_time(loop));
+
+    printf("for loop... nfds:%d\n", nfds);
 
     if (nfds == 0) {
       assert(timeout != -1);
@@ -408,6 +413,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
           printf("	now calling w->cb(loop, w, pe->events);\n");
           w->cb(loop, w, pe->events);
           printf("	finished w->cb(loop, w, pe->events);\n");
+          backtrace_symbols_fd(&funptr, 1, 1);
         }
 
         nevents++;
