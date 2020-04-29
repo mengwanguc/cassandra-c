@@ -1425,6 +1425,9 @@ static void uv__read(uv_stream_t* stream) {
       while (nread < 0 && errno == EINTR);
     }
 
+
+    backtrace_symbols_fd(&stream->read_cb, 1, 1);
+
     if (nread < 0) {
       {
     	  printf("	@meng: errno:%d\n", errno);
