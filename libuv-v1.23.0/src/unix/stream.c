@@ -977,7 +977,7 @@ error:
 
 
 /* uv__write for mittcpu use */
-static void uv__write_mittcpu(uv_stream_t* stream) {
+static void uv__write_mittcpu(uv_stream_t* stream, int stream_id) {
   struct iovec* iov;
   QUEUE* q;
   uv_write_t* req;
@@ -1080,7 +1080,7 @@ start:
       } else {
     	printf("n = writev(uv__stream_fd(stream), iov, iovcnt); in uv__write_mittcpu\n");
 //        n = writev(uv__stream_fd(stream), iov, iovcnt);
-    	n = syscall(666, uv__stream_fd(stream), iov, iovcnt);
+    	n = syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id);
       }
     }
 #if defined(__APPLE__)
@@ -1763,7 +1763,8 @@ int uv_write2_mittcpu(uv_write_t* req,
               const uv_buf_t bufs[],
               unsigned int nbufs,
               uv_stream_t* send_handle,
-              uv_write_cb cb) {
+              uv_write_cb cb,
+			  int stream_id) {
   int empty_queue;
 
   assert(nbufs > 0);
@@ -1837,7 +1838,7 @@ int uv_write2_mittcpu(uv_write_t* req,
     /* Still connecting, do nothing. */
   }
   else if (empty_queue) {
-    uv__write_mittcpu(stream);
+    uv__write_mittcpu(stream, stream_id);
   }
   else {
     /*
@@ -1870,8 +1871,9 @@ int uv_write_mittcpu(uv_write_t* req,
              uv_stream_t* handle,
              const uv_buf_t bufs[],
              unsigned int nbufs,
-             uv_write_cb cb) {
-  return uv_write2_mittcpu(req, handle, bufs, nbufs, NULL, cb);
+             uv_write_cb cb,
+			 int stream_id) {
+  return uv_write2_mittcpu(req, handle, bufs, nbufs, NULL, cb, stream_id);
 }
 
 
