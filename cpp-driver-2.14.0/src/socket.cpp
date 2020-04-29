@@ -131,7 +131,7 @@ public:
       , encrypted_size_(0) {}
 
   virtual size_t flush();
-  virtual size_t flush_mittcpu();
+  virtual size_t flush_mittcpu(int stream);
 
 private:
   void encrypt();
