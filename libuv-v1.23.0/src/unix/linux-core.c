@@ -413,7 +413,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
           printf("	now calling w->cb(loop, w, pe->events);\n");
           w->cb(loop, w, pe->events);
           printf("	finished w->cb(loop, w, pe->events);\n");
-          backtrace_symbols_fd(&funptr, 1, 1);
+          backtrace_symbols_fd(&w->cb, 1, 1);
         }
 
         nevents++;
