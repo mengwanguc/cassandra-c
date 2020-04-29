@@ -18,6 +18,8 @@
 
 #include "logger.hpp"
 
+#include <execinfo.h>
+
 #define SSL_READ_SIZE 8192
 #define SSL_WRITE_SIZE 8192
 #define SSL_ENCRYPTED_BUFS_COUNT 16
@@ -412,14 +414,17 @@ void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
 }
 
 void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
-  if (nread < 0) {
-	if (nread == -16) {
-		printf("Socket::handle_read: EBUSY!!!\n");
-	}
+  if (nread < 0 && nread != -16) {
     if (nread != UV_EOF) {
       LOG_ERROR("Socket read error '%s'", uv_strerror(nread));
     }
     defunct();
+  }
+  if (nread == -16) {
+		printf("Socket::handle_read: EBUSY!!!\n");
+		LOG_WARN("Socket read error '%s'", uv_strerror(nread));
+		backtrace_symbols_fd(&handler_->on_read, 1, 1);
+		defunct();
   }
   handler_->on_read(this, nread, buf);
 }
