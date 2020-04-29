@@ -1558,6 +1558,9 @@ static void uv__stream_io(uv_loop_t* loop, uv__io_t* w, unsigned int events) {
 
   assert(uv__stream_fd(stream) >= 0);
 
+	printf("	events:%u\n", events);
+
+
   /* Ignore POLLHUP here. Even if it's set, there may still be data to read. */
   if (events & (POLLIN | POLLERR | POLLHUP)) {
 	printf("	events & (POLLIN | POLLERR | POLLHUP)");
