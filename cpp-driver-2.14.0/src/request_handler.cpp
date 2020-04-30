@@ -445,6 +445,9 @@ void RequestExecution::on_set(ResponseMessage* response) {
       break;
     case CQL_OPCODE_ERROR:
       on_error_response(connection, response);
+    case CQL_OPCODE_MITTCPU_EBUSY:
+      printf("	CQL_OPCODE_MITTCPU_EBUSY in on_set...\n");
+      on_mittcpu_response(connection, response);
       break;
     default:
       connection->defunct();
@@ -637,6 +640,48 @@ void RequestExecution::on_error_response(Connection* connection, ResponseMessage
       break;
   }
 }
+
+
+void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessage* response) {
+  ErrorResponse* error = static_cast<ErrorResponse*>(response->response_body().get());
+
+  RetryPolicy::RetryDecision decision = RetryPolicy::RetryDecision::return_error();
+
+  if (retry_policy()) {
+    decision = retry_policy()->on_unavailable(
+        request(), 1, 1, 0, num_retries_);
+  }
+
+
+  // Process retry decision
+  switch (decision.type()) {
+    case RetryPolicy::RetryDecision::RETURN_ERROR:
+      set_error_with_error_response(
+          response->response_body(),
+          static_cast<CassError>(CASS_ERROR(CASS_ERROR_SOURCE_SERVER, CQL_ERROR_UNAVAILABLE)),
+          error->message().to_string());
+      break;
+
+    case RetryPolicy::RetryDecision::RETRY:
+      set_retry_consistency(decision.retry_consistency());
+      if (decision.retry_current_host()) {
+        retry_current_host();
+      } else {
+        retry_next_host();
+      }
+      num_retries_++;
+      break;
+
+    case RetryPolicy::RetryDecision::IGNORE:
+      set_response(Response::Ptr(new ResultResponse()));
+      break;
+  }
+}
+
+
+
+
+
 
 void RequestExecution::on_error_unprepared(Connection* connection, ErrorResponse* error) {
   LOG_DEBUG("Unprepared error response returned for request: %s",

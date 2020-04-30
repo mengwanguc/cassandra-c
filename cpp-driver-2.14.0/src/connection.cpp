@@ -325,6 +325,8 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
   // A successful read means the connection is still responsive
   restart_terminate_timer();
 
+  response_->setOpcodeMittcpu();
+
   ScopedPtr<ResponseMessage> response(response_.release());
   response_.reset(new ResponseMessage());
 

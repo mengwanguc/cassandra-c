@@ -297,6 +297,7 @@ private:
 
   void on_result_response(Connection* connection, ResponseMessage* response);
   void on_error_response(Connection* connection, ResponseMessage* response);
+  void on_mittcpu_response(Connection* connection, ResponseMessage* response);
   void on_error_unprepared(Connection* connection, ErrorResponse* error);
 
 private:
