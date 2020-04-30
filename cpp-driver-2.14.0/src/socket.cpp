@@ -411,7 +411,7 @@ void Socket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* 
 
 void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
   int stream_id = client->stream_id;
-  printf ("Socket on_read n_read:%d  stream_id:%d\n", n_read, stream_id);
+  printf ("Socket on_read n_read:%d  stream_id:%d\n", nread, stream_id);
   Socket* socket = static_cast<Socket*>(client->data);
   if (nread == -16)
 	  socket->handle_read_mittcpu(nread, buf, stream_id);
