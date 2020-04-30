@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
 
-  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
+//  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
 
 //  cass_cluster_set_num_threads_io(cluster, 4);
 
