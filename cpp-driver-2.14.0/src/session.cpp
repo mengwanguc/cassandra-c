@@ -330,8 +330,8 @@ Future::Ptr Session::execute(const Request::ConstPtr& request, const Address* pr
     request_handler->set_prepared_metadata(cluster()->prepared(execute->prepared()->id()));
   }
 
-  printf("execute request handler... deadline:%d...\n",
-		  request_handler->deadline);
+//  printf("execute request handler... deadline:%d...\n",
+//		  request_handler->deadline);
 
   execute(request_handler);
 
