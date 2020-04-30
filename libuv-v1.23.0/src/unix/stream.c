@@ -1429,7 +1429,7 @@ static void uv__read(uv_stream_t* stream) {
     }
 
 
-    backtrace_symbols_fd(&stream->read_cb, 1, 1);
+//    backtrace_symbols_fd(&stream->read_cb, 1, 1);
 
     if (nread < 0) {
       {
