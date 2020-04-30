@@ -51,9 +51,9 @@ int main(int argc, char* argv[]) {
   CassFuture* connect_future = NULL;
   CassCluster* cluster = cass_cluster_new();
   CassSession* session = cass_session_new();
-//  char* hosts = "heavy-client.cass-5n.ucare.emulab.net";
-  char* hosts = "155.98.38.109";
-  char* whilelist_hosts = "155.98.36.109";
+  char* hosts = "155.98.38.221";
+//  char* hosts = "155.98.38.109";
+  char* whilelist_hosts = "155.98.38.221";
 
   if (argc > 1) {
     hosts = argv[1];
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
 
-//  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
+  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
 
   /* Provide the cluster object as configuration to connect the session */
   connect_future = cass_session_connect(session, cluster);
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 //    const char* query = "SELECT release_version FROM system.local";
     int i = 0;
     sleep(5);
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 10; i++) {
       char query[100];
       snprintf(query, 100, "SELECT name FROM mittcpu.students WHERE id = %d", i+1);
       CassStatement* statement = cass_statement_new(query, 0);

@@ -1,3 +1,6 @@
 sh autogen.sh
 ./configure
-make install
+make install -j 64
+
+/sbin/ldconfig -v
+
