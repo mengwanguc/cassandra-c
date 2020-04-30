@@ -1058,7 +1058,7 @@ start:
     }
 
     do {
-      printf("sendmsg(uv__stream_fd(stream), &msg, 0);\n");
+//      printf("sendmsg(uv__stream_fd(stream), &msg, 0);\n");
       n = sendmsg(uv__stream_fd(stream), &msg, 0);
     }
 #if defined(__APPLE__)
@@ -1075,11 +1075,11 @@ start:
   } else {
     do {
       if (iovcnt == 1) {
-    	printf("write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);\n");
+//    	printf("write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);\n");
         n = write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);
       } else {
-    	printf("syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id); stream_id:%d\n",
-    			stream_id);
+//    	printf("syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id); stream_id:%d\n",
+//    			stream_id);
 //        n = writev(uv__stream_fd(stream), iov, iovcnt);
     	n = syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id);
       }
@@ -1113,7 +1113,7 @@ start:
       size_t len = buf->len;
 
 
-      printf("n: %d, len:%d\n", n, len);
+//      printf("n: %d, len:%d\n", n, len);
 
       assert(req->write_index < req->nbufs);
 
@@ -1404,11 +1404,11 @@ static void uv__read(uv_stream_t* stream) {
 
     if (!is_ipc) {
       do {
-    	printf("\n uv__read calling read system call...\n");
-    	backtrace_meng();
+//    	printf("\n uv__read calling read system call...\n");
+//    	backtrace_meng();
 //        nread = read(uv__stream_fd(stream), buf.base, buf.len);
     	nread = syscall(669, uv__stream_fd(stream), buf.base, buf.len, &stream_id);
-        printf("read finished, nread:%d\n\n", nread);
+//        printf("read finished, nread:%d\n\n", nread);
       }
       while (nread < 0 && errno == EINTR);
     } else {
@@ -1433,7 +1433,7 @@ static void uv__read(uv_stream_t* stream) {
 
     if (nread < 0) {
       {
-    	  printf("	@meng: errno:%d  stream_id:%d\n", errno, stream_id);
+//    	  printf("	@meng: errno:%d  stream_id:%d\n", errno, stream_id);
 //    	  backtrace_meng();
       }
 
@@ -1571,12 +1571,12 @@ static void uv__stream_io(uv_loop_t* loop, uv__io_t* w, unsigned int events) {
 
   assert(uv__stream_fd(stream) >= 0);
 
-	printf("	events:%u\n", events);
+//	printf("	events:%u\n", events);
 
 
   /* Ignore POLLHUP here. Even if it's set, there may still be data to read. */
   if (events & (POLLIN | POLLERR | POLLHUP)) {
-	printf("	events & (POLLIN | POLLERR | POLLHUP)");
+//	printf("	events & (POLLIN | POLLERR | POLLHUP)");
     uv__read(stream);
   }
 

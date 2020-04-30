@@ -223,10 +223,10 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
   }
 
 
-  printf("uv__io_poll is called... timout:%d\n", timeout);
+//  printf("uv__io_poll is called... timout:%d\n", timeout);
 
   while (!QUEUE_EMPTY(&loop->watcher_queue)) {
-	printf("while loop...\n");
+//	printf("while loop...\n");
     q = QUEUE_HEAD(&loop->watcher_queue);
     QUEUE_REMOVE(q);
     QUEUE_INIT(q);
@@ -312,7 +312,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
      */
     SAVE_ERRNO(uv__update_time(loop));
 
-    printf("for loop... nfds:%d\n", nfds);
+//    printf("for loop... nfds:%d\n", nfds);
 
     if (nfds == 0) {
       assert(timeout != -1);
@@ -328,7 +328,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
 
     if (nfds == -1) {
       if (errno == EBUSY)
-    	  printf("	!!!!!!!!!!!!EBUSY\n");
+//    	  printf("	!!!!!!!!!!!!EBUSY\n");
       if (errno == ENOSYS) {
         /* epoll_wait() or epoll_pwait() failed, try the other system call. */
         assert(no_epoll_wait == 0 || no_epoll_pwait == 0);
@@ -410,9 +410,9 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
         if (w == &loop->signal_io_watcher)
           have_signals = 1;
         else {
-          printf("	now calling w->cb(loop, w, pe->events);\n");
+//          printf("	now calling w->cb(loop, w, pe->events);\n");
           w->cb(loop, w, pe->events);
-          printf("	finished w->cb(loop, w, pe->events);\n");
+//          printf("	finished w->cb(loop, w, pe->events);\n");
         }
 
         nevents++;

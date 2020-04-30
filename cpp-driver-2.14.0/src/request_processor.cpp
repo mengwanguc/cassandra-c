@@ -260,8 +260,8 @@ void RequestProcessor::notify_token_map_updated(const TokenMap::Ptr& token_map) 
 void RequestProcessor::process_request(const RequestHandler::Ptr& request_handler) {
   request_handler->inc_ref(); // Queue reference
 
-  printf("request_handler.deadline:%d  get.deadline:%d\n",
-		  	 request_handler->deadline, request_handler.get()->deadline);
+//  printf("request_handler.deadline:%d  get.deadline:%d\n",
+//		  	 request_handler->deadline, request_handler.get()->deadline);
 
   if (request_queue_->enqueue(request_handler.get())) {
     request_count_.fetch_add(1);
@@ -522,7 +522,7 @@ void RequestProcessor::on_timeout(MicroTimer* timer) {
 }
 
 void RequestProcessor::on_async(Async* async) {
-  printf("calling on_sync...\n");
+//  printf("calling on_sync...\n");
   process_requests(0);
 
   connection_pool_manager_->flush();
@@ -559,7 +559,7 @@ int RequestProcessor::process_requests(uint64_t processing_time) {
         }
         request_handler->init(*profile, connection_pool_manager_.get(), token_map_.get(),
                               settings_.timestamp_generator.get(), this);
-        printf("RequestProcessor::process_requests deadline:%d\n", request_handler->deadline);
+//        printf("RequestProcessor::process_requests deadline:%d\n", request_handler->deadline);
         request_handler->execute();
         processed++;
       } else {

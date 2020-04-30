@@ -74,13 +74,13 @@ class NopConnectionListener : public ConnectionListener {
 static NopConnectionListener nop_listener__;
 
 void ConnectionHandler::on_read(Socket* socket, ssize_t nread, const uv_buf_t* buf) {
-  printf("	ConnectionHandler::on_read is called...\n");
+//  printf("	ConnectionHandler::on_read is called...\n");
   connection_->on_read(buf->base, nread);
   free_buffer(buf);
 }
 
 void ConnectionHandler::on_read_mittcpu(Socket* socket, ssize_t nread, const uv_buf_t* buf, int stream_id) {
-  printf("	ConnectionHandler::on_read_mittcpu is called...\n");
+//  printf("	ConnectionHandler::on_read_mittcpu is called...\n");
   connection_->on_read_mittcpu(buf->base, nread, stream_id);
   free_buffer(buf);
 }
@@ -335,7 +335,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
   if (stream_manager_.get(stream_id, callback)) {
     switch (callback->state()) {
       case RequestCallback::REQUEST_STATE_READING:
-    	printf("	REQUEST_STATE_READING......... callback:%s\n", typeid(callback).name());
+//    	printf("	REQUEST_STATE_READING......... callback:%s\n", typeid(callback).name());
         pending_reads_.remove(callback.get());
         stream_manager_.release(callback->stream());
         inflight_request_count_.fetch_sub(1);

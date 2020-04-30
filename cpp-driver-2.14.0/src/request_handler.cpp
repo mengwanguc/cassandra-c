@@ -448,7 +448,7 @@ void RequestExecution::on_set(ResponseMessage* response) {
       on_error_response(connection, response);
       break;
     case CQL_OPCODE_MITTCPU_EBUSY:
-      printf("	CQL_OPCODE_MITTCPU_EBUSY in on_set...\n");
+//      printf("	CQL_OPCODE_MITTCPU_EBUSY in on_set...\n");
       on_mittcpu_response(connection, response);
       break;
     default:

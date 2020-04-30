@@ -79,7 +79,7 @@ size_t SocketWrite::flush_mittcpu(int stream) {
 
     is_flushed_ = true;
     uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
-    printf("	@meng: SocketWrite::flush_mittcpu(): now will do uv_write_mittcpu...\n");
+//    printf("	@meng: SocketWrite::flush_mittcpu(): now will do uv_write_mittcpu...\n");
     uv_write_mittcpu(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write, stream);
   }
   return total;
@@ -411,7 +411,7 @@ void Socket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* 
 
 void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
   int stream_id = client->stream_id;
-  printf ("Socket on_read n_read:%ld  stream_id:%d\n", nread, stream_id);
+//  printf ("Socket on_read n_read:%ld  stream_id:%d\n", nread, stream_id);
   Socket* socket = static_cast<Socket*>(client->data);
   if (nread == -16)
 	  socket->handle_read_mittcpu(nread, buf, stream_id);
@@ -430,7 +430,7 @@ void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
 }
 
 void Socket::handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_id) {
-  printf("Socket::handle_read: EBUSY!!!\n");
+//  printf("Socket::handle_read: EBUSY!!!\n");
   LOG_WARN("Socket read error '%s'", uv_strerror(nread));
 //  ScopedPtr<ConnectionHandler> connectionHandler = dynamic_cast<ScopedPtr<ConnectionHandler>>(handler_);
   ConnectionHandler* connectionHandler = dynamic_cast<ConnectionHandler*>(handler_.get());
