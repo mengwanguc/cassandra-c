@@ -15,6 +15,7 @@
 */
 
 #include "socket.hpp"
+#include "connection.hpp"
 
 #include "logger.hpp"
 
