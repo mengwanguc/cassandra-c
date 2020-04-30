@@ -359,7 +359,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
         break;
      }
    } else {
-     LOG_ERROR("Invalid stream ID %d", stread_id);
+     LOG_ERROR("Invalid stream ID %d", stream_id);
      defunct();
    }
 }
