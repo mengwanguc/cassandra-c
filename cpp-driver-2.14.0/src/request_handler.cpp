@@ -405,6 +405,7 @@ void RequestExecution::retry_current_host() {
   // Reset the request so it can be executed again
   set_state(REQUEST_STATE_NEW);
 
+  request_handler_->deadline = 0;
   request_handler_->retry(this, RequestHandler::Protected());
 }
 
