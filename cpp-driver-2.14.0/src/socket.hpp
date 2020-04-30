@@ -251,8 +251,6 @@ public:
    */
   virtual size_t flush() = 0;
 
-  virtual size_t flush_mittcpu(int stream) = 0;
-
 protected:
   static void on_write(uv_write_t* req, int status);
   void handle_write(uv_write_t* req, int status);
@@ -322,10 +320,6 @@ public:
    */
   size_t flush();
 
-
-  size_t flush_mittcpu(int stream);
-
-
   /**
    * Determine if the socket is closing.
    *
@@ -362,7 +356,6 @@ private:
 
   static void on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf);
   void handle_read(ssize_t nread, const uv_buf_t* buf);
-  void handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_id);
 
   static void on_close(uv_handle_t* handle);
   void handle_close();

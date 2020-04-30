@@ -15,11 +15,8 @@
 */
 
 #include "socket.hpp"
-#include "connection.hpp"
 
 #include "logger.hpp"
-
-#include <execinfo.h>
 
 #define SSL_READ_SIZE 8192
 #define SSL_WRITE_SIZE 8192
@@ -42,7 +39,6 @@ public:
       : SocketWriteBase(socket) {}
 
   size_t flush();
-  size_t flush_mittcpu(int stream);
 };
 
 size_t SocketWrite::flush() {
@@ -63,29 +59,6 @@ size_t SocketWrite::flush() {
   }
   return total;
 }
-
-
-size_t SocketWrite::flush_mittcpu(int stream) {
-  size_t total = 0;
-  if (!is_flushed_ && !buffers_.empty()) {
-    UvBufVec bufs;
-
-    bufs.reserve(buffers_.size());
-
-    for (BufferVec::const_iterator it = buffers_.begin(), end = buffers_.end(); it != end; ++it) {
-      total += it->size();
-      bufs.push_back(uv_buf_init(const_cast<char*>(it->data()), it->size()));
-    }
-
-    is_flushed_ = true;
-    uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
-//    printf("	@meng: SocketWrite::flush_mittcpu(): now will do uv_write_mittcpu...\n");
-    uv_write_mittcpu(&req_, sock_stream, bufs.data(), bufs.size(), SocketWrite::on_write, stream);
-  }
-  return total;
-}
-
-
 
 SocketHandler::~SocketHandler() {
   while (!buffer_reuse_list_.empty()) {
@@ -132,7 +105,6 @@ public:
       , encrypted_size_(0) {}
 
   virtual size_t flush();
-  virtual size_t flush_mittcpu(int stream);
 
 private:
   void encrypt();
@@ -163,28 +135,6 @@ size_t SslSocketWrite::flush() {
   }
   return total;
 }
-
-
-size_t SslSocketWrite::flush_mittcpu(int stream) {
-  size_t total = 0;
-  if (!is_flushed_ && !buffers_.empty()) {
-    rb::RingBuffer::Position prev_pos = ssl_session_->outgoing().write_position();
-
-    encrypt();
-
-    SmallVector<uv_buf_t, SSL_ENCRYPTED_BUFS_COUNT> bufs;
-    total = encrypted_size_ = ssl_session_->outgoing().peek_multiple(prev_pos, &bufs);
-
-    LOG_TRACE("Sending %u encrypted bytes", static_cast<unsigned int>(encrypted_size_));
-
-    uv_stream_t* sock_stream = reinterpret_cast<uv_stream_t*>(tcp());
-    uv_write(&req_, sock_stream, bufs.data(), bufs.size(), SslSocketWrite::on_write);
-
-    is_flushed_ = true;
-  }
-  return total;
-}
-
 
 void SslSocketWrite::encrypt() {
   char buf[SSL_WRITE_SIZE];
@@ -382,12 +332,6 @@ size_t Socket::flush() {
   return pending_writes_.back()->flush();
 }
 
-size_t Socket::flush_mittcpu(int stream) {
-  if (pending_writes_.is_empty()) return 0;
-
-  return pending_writes_.back()->flush_mittcpu(stream);
-}
-
 bool Socket::is_closing() const {
   return uv_is_closing(reinterpret_cast<const uv_handle_t*>(&tcp_)) != 0;
 }
@@ -410,13 +354,8 @@ void Socket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* 
 }
 
 void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
-  int stream_id = client->stream_id;
-//  printf ("Socket on_read n_read:%ld  stream_id:%d\n", nread, stream_id);
   Socket* socket = static_cast<Socket*>(client->data);
-  if (nread == -16)
-	  socket->handle_read_mittcpu(nread, buf, stream_id);
-  else
-	  socket->handle_read(nread, buf);
+  socket->handle_read(nread, buf);
 }
 
 void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
@@ -428,20 +367,6 @@ void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
   }
   handler_->on_read(this, nread, buf);
 }
-
-void Socket::handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_id) {
-//  printf("Socket::handle_read: EBUSY!!!\n");
-  LOG_WARN("Socket read error '%s'", uv_strerror(nread));
-//  ScopedPtr<ConnectionHandler> connectionHandler = dynamic_cast<ScopedPtr<ConnectionHandler>>(handler_);
-  ConnectionHandler* connectionHandler = dynamic_cast<ConnectionHandler*>(handler_.get());
-  if (connectionHandler == NULL) {
-	  defunct();
-	  handler_->on_read(this, nread, buf);
-  } else {
-	  connectionHandler->on_read_mittcpu(this, nread, buf, stream_id);
-  }
-}
-
 
 void Socket::on_close(uv_handle_t* handle) {
   Socket* socket = static_cast<Socket*>(handle->data);

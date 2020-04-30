@@ -42,7 +42,6 @@
 #define CQL_OPCODE_AUTH_CHALLENGE 0x0E
 #define CQL_OPCODE_AUTH_RESPONSE 0x0F
 #define CQL_OPCODE_AUTH_SUCCESS 0x10
-#define CQL_OPCODE_MITTCPU_EBUSY 0x20
 #define CQL_OPCODE_CANCEL 0xFF
 
 // TODO(mpenick): We need to expose these (not as "CQL")

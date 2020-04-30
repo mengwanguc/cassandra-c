@@ -37,8 +37,6 @@ public:
       : connection_(connection) {}
 
   virtual void on_read(Socket* socket, ssize_t nread, const uv_buf_t* buf);
-  virtual void on_read_mittcpu(Socket* socket, ssize_t nread, const uv_buf_t* buf,
-		  int stream_id);
   virtual void on_write(Socket* socket, int status, SocketRequest* request);
   virtual void on_close();
 
@@ -161,9 +159,6 @@ public:
    */
   int32_t write_and_flush(const RequestCallback::Ptr& callback);
 
-
-  int32_t write_and_flush_mittcpu(const RequestCallback::Ptr& callback);
-
   /**
    * Flush all outstanding requests.
    */
@@ -223,7 +218,6 @@ private:
 
   void on_write(int status, RequestCallback* request);
   void on_read(const char* buf, size_t size);
-  void on_read_mittcpu(const char* buf, size_t size, int stream_id);
   void on_close();
 
 private:

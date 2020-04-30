@@ -103,8 +103,6 @@ public:
 
   ssize_t decode(const char* input, size_t size);
 
-  void setOpcodeMittcpu();
-
 private:
   bool allocate_body(int8_t opcode);
 

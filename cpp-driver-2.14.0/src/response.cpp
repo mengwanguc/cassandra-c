@@ -98,11 +98,6 @@ bool ResponseMessage::allocate_body(int8_t opcode) {
   }
 }
 
-
-void ResponseMessage::setOpcodeMittcpu() {
-	opcode_ = CQL_OPCODE_MITTCPU_EBUSY;
-}
-
 ssize_t ResponseMessage::decode(const char* input, size_t size) {
   const char* input_pos = input;
 
