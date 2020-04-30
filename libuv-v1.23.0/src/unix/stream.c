@@ -1372,6 +1372,7 @@ static void uv__read(uv_stream_t* stream) {
   int count;
   int err;
   int is_ipc;
+  int stream_id = -1;
 
   stream->flags &= ~UV_HANDLE_READ_PARTIAL;
 
@@ -1405,7 +1406,8 @@ static void uv__read(uv_stream_t* stream) {
       do {
     	printf("\n uv__read calling read system call...\n");
     	backtrace_meng();
-        nread = read(uv__stream_fd(stream), buf.base, buf.len);
+//        nread = read(uv__stream_fd(stream), buf.base, buf.len);
+    	nread = syscall(669, uv__stream_fd(stream), buf.base, buf.len, &stream_id);
         printf("read finished, nread:%d\n\n", nread);
       }
       while (nread < 0 && errno == EINTR);
@@ -1431,7 +1433,7 @@ static void uv__read(uv_stream_t* stream) {
 
     if (nread < 0) {
       {
-    	  printf("	@meng: errno:%d\n", errno);
+    	  printf("	@meng: errno:%d  stream_id:%d\n", errno, stream_id);
 //    	  backtrace_meng();
       }
 
