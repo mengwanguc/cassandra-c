@@ -649,7 +649,7 @@ void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessa
 
   if (retry_policy()) {
     decision = retry_policy()->on_unavailable(
-        request(), 1, 1, 0, num_retries_);
+        request(), CASS_CONSISTENCY_ONE, 1, 0, num_retries_);
   }
 
 
