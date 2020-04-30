@@ -410,8 +410,6 @@ struct uv_shutdown_s {
 #define UV_HANDLE_FIELDS                                                      \
   /* public */                                                                \
   void* data;                                                                 \
-  /* mittcpu */                                                               \
-  int stream_id;                                                              \
   /* read-only */                                                             \
   uv_loop_t* loop;                                                            \
   uv_handle_type type;                                                        \
@@ -504,15 +502,6 @@ UV_EXTERN int uv_write2(uv_write_t* req,
 UV_EXTERN int uv_try_write(uv_stream_t* handle,
                            const uv_buf_t bufs[],
                            unsigned int nbufs);
-
-/* @meng: mittcpu functions... */
-UV_EXTERN int uv_write_mittcpu(uv_write_t* req,
-                       uv_stream_t* handle,
-                       const uv_buf_t bufs[],
-                       unsigned int nbufs,
-                       uv_write_cb cb,
-					   int stream_id);
-
 
 /* uv_write_t is a subclass of uv_req_t. */
 struct uv_write_s {
