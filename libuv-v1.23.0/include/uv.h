@@ -410,6 +410,8 @@ struct uv_shutdown_s {
 #define UV_HANDLE_FIELDS                                                      \
   /* public */                                                                \
   void* data;                                                                 \
+  /* mittcpu */                                                               \
+  int stream_id;                                                              \
   /* read-only */                                                             \
   uv_loop_t* loop;                                                            \
   uv_handle_type type;                                                        \

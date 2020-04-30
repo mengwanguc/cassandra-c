@@ -409,6 +409,8 @@ void Socket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* 
 }
 
 void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
+  int stream_id = client->stream_id;
+  printf ("Socket on_read stream_id:%d\n", stream_id);
   Socket* socket = static_cast<Socket*>(client->data);
   socket->handle_read(nread, buf);
 }

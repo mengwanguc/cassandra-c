@@ -1438,6 +1438,7 @@ static void uv__read(uv_stream_t* stream) {
       }
 
       if (errno == EBUSY) {
+    	  stream->stream_id = stream_id;
     	  stream->read_cb(stream, -16, &buf);
     	  return;
       }
