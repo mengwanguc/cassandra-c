@@ -69,7 +69,7 @@ void *read_thread(void *vargp) {
 
       cass_statement_free(statement);
       cass_future_free(result_future);
-      usleep(1000);
+      usleep(2000);
       // usleep(2000);
       // usleep(2000000);
     }
@@ -77,7 +77,7 @@ void *read_thread(void *vargp) {
 
 
 int main(int argc, char* argv[]) {
-  int n_thread = 5;
+  int n_thread = 20;
   pthread_t* tid = malloc(sizeof(pthread_t) * n_thread);
   /* Setup and connect to cluster */
   CassFuture* connect_future = NULL;
