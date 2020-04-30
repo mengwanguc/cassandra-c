@@ -40,6 +40,7 @@
 #include <linux/kernel.h>
 #include <sys/syscall.h>
 #include <unistd.h>
+#include <netinet/tcp.h>
 
 
 #if defined(__APPLE__)
@@ -1081,6 +1082,8 @@ start:
 //    	printf("syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id); stream_id:%d\n",
 //    			stream_id);
 //        n = writev(uv__stream_fd(stream), iov, iovcnt);
+    	int flags = 1;
+    	setsockopt(uv__stream_fd(stream), SOL_TCP, TCP_NODELAY, (void *)&flags, sizeof(flags));
     	n = syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id);
       }
     }
