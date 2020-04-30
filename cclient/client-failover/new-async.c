@@ -7,14 +7,21 @@
 
 #define BILLION 1000000000L
 
+struct metadata {
+  int id;
+  struct timespec start;
+};
+
+
+
 void on_result(CassFuture* result_future, void* data) {
-    struct timespec start = *(struct timespec*)data;
+    struct metadata meta = *(struct metadata*)data;
     struct timespec end;
     uint64_t diff;
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+    diff = BILLION * (end.tv_sec - meta.start.tv_sec) + end.tv_nsec - meta.start.tv_nsec;
     printf("elapsed time = %llu nanoseconds\n", (long long unsigned int) diff);
 
 
@@ -29,7 +36,7 @@ void on_result(CassFuture* result_future, void* data) {
         const char* release_version;
         size_t release_version_length;
         cass_value_get_string(value, &release_version, &release_version_length);
-        printf("name: '%.*s'\n", (int)release_version_length, release_version);
+        printf("%d  name: '%.*s'\n", meta.id, (int)release_version_length, release_version);
 
 
       }
@@ -40,11 +47,11 @@ void on_result(CassFuture* result_future, void* data) {
       const char* message;
       size_t message_length;
       cass_future_error_message(result_future, &message, &message_length);
-      fprintf(stderr, "Unable to run query: '%.*s'\n", (int)message_length, message);
+      fprintf(stderr, "%d  Unable to run query: '%.*s'\n", meta.id, (int)message_length, message);
     }
-    free(data);
 
 }
+
 
 
 int main(int argc, char* argv[]) {
@@ -63,7 +70,7 @@ int main(int argc, char* argv[]) {
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
 
-  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
+//  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
 
   /* Provide the cluster object as configuration to connect the session */
   connect_future = cass_session_connect(session, cluster);
@@ -76,15 +83,16 @@ int main(int argc, char* argv[]) {
     for (i = 0; i < 10; i++) {
 //      char query[100];
 //      snprintf(query, 100, "SELECT name FROM mittcpu.students WHERE id = %d", i+1);
-      char* query = "SELECT name FROM cassDB.users WHERE id = 0df218dd-10fa-11ea-bf01-54271e04ce91";
+      char *query = "SELECT name FROM cassDB.users WHERE id = 0df218dd-10fa-11ea-bf01-54271e04ce91";
       CassStatement* statement = cass_statement_new(query, 0);
-      struct timespec *start = malloc(sizeof(struct timespec));
-      clock_gettime(CLOCK_MONOTONIC, start);
+      struct metadata meta;
+      clock_gettime(CLOCK_MONOTONIC, &meta.start);
+      meta.id = i;
 
 
       CassFuture* result_future = cass_session_execute(session, statement);
 
-      cass_future_set_callback(result_future, on_result, start);
+      cass_future_set_callback(result_future, on_result, &meta);
 
       cass_statement_free(statement);
       cass_future_free(result_future);
