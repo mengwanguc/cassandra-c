@@ -20,6 +20,8 @@
 #include "options_request.hpp"
 #include "request.hpp"
 #include "result_response.hpp"
+#include <typeinfo>
+
 
 using namespace datastax;
 using namespace datastax::internal::core;
@@ -74,6 +76,12 @@ static NopConnectionListener nop_listener__;
 void ConnectionHandler::on_read(Socket* socket, ssize_t nread, const uv_buf_t* buf) {
   printf("	ConnectionHandler::on_read is called...\n");
   connection_->on_read(buf->base, nread);
+  free_buffer(buf);
+}
+
+void ConnectionHandler::on_read_mittcpu(Socket* socket, ssize_t nread, const uv_buf_t* buf, int stream_id) {
+  printf("	ConnectionHandler::on_read_mittcpu is called...\n");
+  connection_->on_read_mittcpu(buf->base, nread, stream_id);
   free_buffer(buf);
 }
 
@@ -308,6 +316,55 @@ void Connection::on_read(const char* buf, size_t size) {
     pos += consumed;
   }
 }
+
+
+
+void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
+  listener_->on_read();
+
+  const char* pos = buf;
+  size_t remaining = size;
+
+  // A successful read means the connection is still responsive
+  restart_terminate_timer();
+
+  ScopedPtr<ResponseMessage> response(response_.release());
+  response_.reset(new ResponseMessage());
+
+  RequestCallback::Ptr callback;
+
+  if (stream_manager_.get(stream_id, callback)) {
+    switch (callback->state()) {
+      case RequestCallback::REQUEST_STATE_READING:
+    	printf("	REQUEST_STATE_READING......... callback:%s\n", typeid(callback).name());
+        pending_reads_.remove(callback.get());
+        stream_manager_.release(callback->stream());
+        inflight_request_count_.fetch_sub(1);
+        callback->set_state(RequestCallback::REQUEST_STATE_FINISHED);
+        callback->on_set(response.get());
+        break;
+
+      case RequestCallback::REQUEST_STATE_WRITING:
+      	printf("	REQUEST_STATE_READ_BEFORE_WRITE.........\n");
+        // There are cases when the read callback will happen
+        // before the write callback. If this happens we have
+        // to allow the write callback to finish the request.
+        callback->set_state(RequestCallback::REQUEST_STATE_READ_BEFORE_WRITE);
+        // Save the response for the write callback
+        callback->set_read_before_write_response(response.release()); // Transfer ownership
+        break;
+
+      default:
+        assert(false && "Invalid request state after receiving response");
+        break;
+     }
+   } else {
+     LOG_ERROR("Invalid stream ID %d", response->stream());
+     defunct();
+     continue;
+   }
+}
+
 
 void Connection::on_close() {
   heartbeat_timer_.stop();

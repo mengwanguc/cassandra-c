@@ -412,23 +412,34 @@ void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
   int stream_id = client->stream_id;
   printf ("Socket on_read stream_id:%d\n", stream_id);
   Socket* socket = static_cast<Socket*>(client->data);
-  socket->handle_read(nread, buf);
+  if (nread == -16)
+	  socket->handle_read_mittcpu(nread, buf, stream_id);
+  else
+	  socket->handle_read(nread, buf);
 }
 
 void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
-  if (nread < 0 && nread != -16) {
+  if (nread < 0) {
     if (nread != UV_EOF) {
       LOG_ERROR("Socket read error '%s'", uv_strerror(nread));
     }
     defunct();
   }
-  if (nread == -16) {
-		printf("Socket::handle_read: EBUSY!!!\n");
-		LOG_WARN("Socket read error '%s'", uv_strerror(nread));
-		defunct();
-  }
   handler_->on_read(this, nread, buf);
 }
+
+void Socket::handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_id) {
+  printf("Socket::handle_read: EBUSY!!!\n");
+  LOG_WARN("Socket read error '%s'", uv_strerror(nread));
+  ConnectionHandler* connectionHandler = dynamic_cast<ConnectionHandler*>(handler_);
+  if (connectionHandler == NULL) {
+	  defunct();
+	  handler_->on_read(this, nread, buf);
+  } else {
+	  connectionHandler->on_read_mittcpu(this, nread, buf, stream_id);
+  }
+}
+
 
 void Socket::on_close(uv_handle_t* handle) {
   Socket* socket = static_cast<Socket*>(handle->data);

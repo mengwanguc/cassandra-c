@@ -362,6 +362,7 @@ private:
 
   static void on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf);
   void handle_read(ssize_t nread, const uv_buf_t* buf);
+  void handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_id);
 
   static void on_close(uv_handle_t* handle);
   void handle_close();
