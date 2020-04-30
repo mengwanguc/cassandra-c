@@ -432,7 +432,7 @@ void Socket::handle_read(ssize_t nread, const uv_buf_t* buf) {
 void Socket::handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_id) {
   printf("Socket::handle_read: EBUSY!!!\n");
   LOG_WARN("Socket read error '%s'", uv_strerror(nread));
-  ConnectionHandler* connectionHandler = dynamic_cast<ConnectionHandler*>(handler_);
+  ScopedPtr<ConnectionHandler> connectionHandler = dynamic_cast<ScopedPtr<ConnectionHandler>>(handler_);
   if (connectionHandler == NULL) {
 	  defunct();
 	  handler_->on_read(this, nread, buf);

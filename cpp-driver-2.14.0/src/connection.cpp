@@ -322,9 +322,6 @@ void Connection::on_read(const char* buf, size_t size) {
 void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
   listener_->on_read();
 
-  const char* pos = buf;
-  size_t remaining = size;
-
   // A successful read means the connection is still responsive
   restart_terminate_timer();
 
