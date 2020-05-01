@@ -1079,7 +1079,7 @@ start:
 //    	printf("write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);\n");
         n = write(uv__stream_fd(stream), iov[0].iov_base, iov[0].iov_len);
       } else {
-//    	printf("syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id); stream_id:%d\n",
+    	printf("syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id); stream_id:%d\n",
 //    			stream_id);
 //        n = writev(uv__stream_fd(stream), iov, iovcnt);
     	int flags = 1;
