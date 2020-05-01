@@ -303,6 +303,7 @@ void RequestHandler::set_error_with_error_response(const Host::Ptr& host,
 void RequestHandler::stop_timer() { timer_.stop(); }
 
 void RequestHandler::on_timeout(Timer* timer) {
+  printf("	on_timeout...timeout:%d\n", wrapper_.request_timeout_ms());
   if (metrics_) {
     metrics_->request_timeouts.inc();
   }
