@@ -117,7 +117,8 @@ void RequestCallback::on_close() {
       if (request()->is_idempotent()) {
         on_retry_next_host();
       } else {
-    	printf("RequestCallback::on_close... timeout");
+
+    	printf("RequestCallback::on_close... timeout\n");
         on_error(CASS_ERROR_LIB_REQUEST_TIMED_OUT, "Request timed out");
       }
       break;
