@@ -435,6 +435,7 @@ void Socket::handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_
 //  ScopedPtr<ConnectionHandler> connectionHandler = dynamic_cast<ScopedPtr<ConnectionHandler>>(handler_);
   ConnectionHandler* connectionHandler = dynamic_cast<ConnectionHandler*>(handler_.get());
   if (connectionHandler == NULL) {
+	  LOG_ERROR("handler is not connectionHandler!!!");
 	  defunct();
 	  handler_->on_read(this, nread, buf);
   } else {
