@@ -166,7 +166,7 @@ public:
   Host::Ptr next_host(Protected);
   int64_t next_execution(const Host::Ptr& current_host, Protected);
 
-  void start_request(uv_loop_t* loop, Protected);
+  void start_request(uv_loop_t* loop, Protected, RequestExecution* execution);
 
   void add_attempted_address(const Address& address, Protected);
 

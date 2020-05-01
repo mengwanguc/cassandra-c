@@ -29,6 +29,7 @@
 #include "result_response.hpp"
 #include "row.hpp"
 #include "session.hpp"
+#include <iostream>
 
 #include <uv.h>
 
@@ -311,8 +312,8 @@ void RequestHandler::on_timeout(Timer* timer) {
 }
 
 void RequestExecution::on_timeout(Timer* timer) {
-  printf("	on_timeout...timeout:%lu  host:%s\n",
-		  wrapper_.request_timeout_ms(), current_host_->address_string());
+  std::cout << "	on_timeout...timeout:" << wrapper_.request_timeout_ms()
+		  << "host:" << current_host_->address_string() << std::endl;
   this->request_handler_->on_timeout(timer);
 }
 
