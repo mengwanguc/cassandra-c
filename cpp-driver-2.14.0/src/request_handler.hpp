@@ -192,13 +192,14 @@ public:
 
 public:
   void on_timeout(Timer* timer);
+  RequestWrapper wrapper_;
 
 private:
   void stop_request();
   void internal_retry(RequestExecution* request_execution);
 
 private:
-  RequestWrapper wrapper_;
+
   SharedRefPtr<ResponseFuture> future_;
 
   bool is_done_;

@@ -312,7 +312,7 @@ void RequestHandler::on_timeout(Timer* timer) {
 }
 
 void RequestExecution::on_timeout(Timer* timer) {
-  std::cout << "	on_timeout...timeout:" << wrapper_.request_timeout_ms()
+  std::cout << "	on_timeout...timeout:" << request_handler_->wrapper_.request_timeout_ms()
 		  << "host:" << current_host_->address_string() << std::endl;
   this->request_handler_->on_timeout(timer);
 }
