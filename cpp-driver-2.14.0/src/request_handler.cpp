@@ -205,11 +205,11 @@ void RequestHandler::retry(RequestExecution* request_execution, Protected) {
   internal_retry(request_execution);
 }
 
-void RequestHandler::start_request(uv_loop_t* loop, Protected) {
+void RequestHandler::start_request(uv_loop_t* loop, Protected, RequestExecution* execution) {
   if (!timer_.is_running()) {
     uint64_t request_timeout_ms = wrapper_.request_timeout_ms();
     if (request_timeout_ms > 0) { // 0 means no timeout
-      timer_.start(loop, request_timeout_ms, bind_callback(&RequestHandler::on_timeout, this));
+      timer_.start(loop, request_timeout_ms, bind_callback(&RequestExecution::on_timeout, execution));
     }
   }
 }
@@ -303,13 +303,19 @@ void RequestHandler::set_error_with_error_response(const Host::Ptr& host,
 void RequestHandler::stop_timer() { timer_.stop(); }
 
 void RequestHandler::on_timeout(Timer* timer) {
-  printf("	on_timeout...timeout:%lu\n", wrapper_.request_timeout_ms());
   if (metrics_) {
     metrics_->request_timeouts.inc();
   }
   set_error(CASS_ERROR_LIB_REQUEST_TIMED_OUT, "Request timed out");
   LOG_DEBUG("Request timed out");
 }
+
+void RequestExecution::on_timeout(Timer* timer) {
+  printf("	on_timeout...timeout:%lu  host:%s\n",
+		  wrapper_.request_timeout_ms(), current_host_->address_string());
+  this->request_handler_->on_timeout(timer);
+}
+
 
 void RequestHandler::stop_request() {
   if (!is_done_) {
@@ -424,7 +430,7 @@ void RequestExecution::on_write(Connection* connection) {
   if (request()->record_attempted_addresses()) {
     request_handler_->add_attempted_address(current_host_->address(), RequestHandler::Protected());
   }
-  request_handler_->start_request(connection->loop(), RequestHandler::Protected());
+  request_handler_->start_request(connection->loop(), RequestHandler::Protected(), this);
   if (request()->is_idempotent()) {
     int64_t timeout = request_handler_->next_execution(current_host_, RequestHandler::Protected());
     if (timeout == 0) {

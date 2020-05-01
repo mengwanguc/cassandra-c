@@ -190,7 +190,7 @@ public:
 
   void stop_timer();
 
-private:
+public:
   void on_timeout(Timer* timer);
 
 private:
@@ -282,6 +282,8 @@ public:
   virtual void on_retry_current_host();
   virtual void on_retry_next_host();
   RequestHandler::Ptr request_handler_;
+
+  void on_timeout(Timer* timer);
 
 
 private:
