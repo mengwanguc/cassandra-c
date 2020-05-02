@@ -1084,6 +1084,8 @@ start:
 //        n = writev(uv__stream_fd(stream), iov, iovcnt);
     	int flags = 1;
     	setsockopt(uv__stream_fd(stream), SOL_TCP, TCP_NODELAY, (void *)&flags, sizeof(flags));
+    	if (stream_id == 0)
+    		stream_id = 2147483647;
     	n = syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id);
       }
     }
@@ -1442,7 +1444,11 @@ static void uv__read(uv_stream_t* stream) {
       }
 
       if (errno == EBUSY) {
-    	  printf("	uv__read: stream_id:%d\n", stream_id);
+//    	  printf("	uv__read: stream_id:%d\n", stream_id);
+    	  if (stream_id == 2147483647) {
+    		  printf("stream_id == 2147483647!!!\n");
+    		  stream_id = 0;
+    	  }
     	  stream->stream_id = stream_id;
     	  stream->read_cb(stream, -16, &buf);
     	  return;
