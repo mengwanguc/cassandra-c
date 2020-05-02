@@ -1117,6 +1117,9 @@ start:
       uv_buf_t* buf = &(req->bufs[req->write_index]);
       size_t len = buf->len;
 
+
+//      printf("n: %d, len:%d\n", n, len);
+
       assert(req->write_index < req->nbufs);
 
       if ((size_t)n < len) {
@@ -1138,11 +1141,6 @@ start:
         }
 
       } else {
-          printf("\n n: %d, len:%d\n", n, len);
-          int x;
-          for (x = 0; x < len; x++) {
-        	  printf("%c", *(buf->base+x));
-          }
         /* Finished writing the buf at index req->write_index. */
         req->write_index++;
 
@@ -1157,7 +1155,6 @@ start:
           assert(n == 0);
           uv__write_req_finish(req);
           /* TODO: start trying to write the next request. */
-          printf("\n-------------- next packet\n");
           return;
         }
       }
