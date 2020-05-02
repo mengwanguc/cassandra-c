@@ -172,8 +172,8 @@ int32_t Connection::write_and_flush_mittcpu(const RequestCallback::Ptr& callback
   int32_t result = write(callback);
   if (result > 0) {
 	  socket_->flush_mittcpu(callback->stream());
-	    printf("	Connection::write_and_flush_mittcpu callback stream:%d\n",
-	    		callback->stream());
+//	    printf("	Connection::write_and_flush_mittcpu callback stream:%d\n",
+//	    		callback->stream());
   }
   return result;
 }
