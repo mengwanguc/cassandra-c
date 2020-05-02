@@ -1138,10 +1138,10 @@ start:
         }
 
       } else {
-          printf("n: %d, len:%d\n", n, len);
+          printf("\n n: %d, len:%d\n", n, len);
           int x;
           for (x = 0; x < len; x++) {
-        	  printf("%s\n", buf->base);
+        	  printf("%c", *(buf->base+x));
           }
         /* Finished writing the buf at index req->write_index. */
         req->write_index++;
@@ -1157,7 +1157,7 @@ start:
           assert(n == 0);
           uv__write_req_finish(req);
           /* TODO: start trying to write the next request. */
-          printf("--------------");
+          printf("\n-------------- next packet\n");
           return;
         }
       }
