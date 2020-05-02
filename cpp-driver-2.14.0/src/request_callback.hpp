@@ -186,6 +186,8 @@ public:
 
   int stream() const { return stream_; }
 
+  void setStream(int stream) {stream_ = stream;}
+
   State state() const { return state_; }
   void set_state(State next_state);
 

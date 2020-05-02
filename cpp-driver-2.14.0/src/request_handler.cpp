@@ -316,7 +316,8 @@ void RequestHandler::on_timeout(Timer* timer) {
 
 void RequestExecution::on_timeout(Timer* timer) {
   std::cout << "	on_timeout...timeout:" << request_handler_->wrapper_.request_timeout_ms()
-		  << "host:" << current_host_->address_string() << std::endl;
+		  << " host:" << current_host_->address_string()
+		  << " stream id:" << stream() << std::endl;
   this->request_handler_->on_timeout(timer);
 }
 
@@ -345,8 +346,9 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
         manager_->find_least_busy(request_execution->current_host()->address());
     if (connection) {
       int32_t result = 0;
-      if (request_execution->request_handler_->deadline == 1)
+      if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
+      }
       else
     	  result = connection->write(request_execution);
 

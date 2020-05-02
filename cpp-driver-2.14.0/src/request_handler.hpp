@@ -286,6 +286,8 @@ public:
 
   void on_timeout(Timer* timer);
 
+  int stream_id = 0;
+
 
 private:
   void on_execute_next(Timer* timer);
