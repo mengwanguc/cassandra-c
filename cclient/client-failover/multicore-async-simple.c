@@ -56,7 +56,7 @@ void *read_thread(void *vargp) {
 //    const char* query = "SELECT release_version FROM system.local";
     int i = 0;
     // printf("Main read_thread before LOOP\n");
-    for (i = 0; i < 30000; i++) {
+    for (i = 0; i < 32500; i++) {
       const char* query = "SELECT name FROM cassDB.users WHERE id = 0df218dd-10fa-11ea-bf01-54271e04ce91";
       CassStatement* statement = cass_statement_new(query, 0);
       struct timespec *start = malloc(sizeof(struct timespec));

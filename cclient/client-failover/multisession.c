@@ -80,7 +80,7 @@ void *read_thread(void *vargp) {
 void *connect_thread(void *vargp) {
   printf("starting a new session...\n");
 
-  int n_thread = 1;
+  int n_thread = 5;
   pthread_t* tid = malloc(sizeof(pthread_t) * n_thread);
   /* Setup and connect to cluster */
   CassFuture* connect_future = NULL;
@@ -129,7 +129,7 @@ void *connect_thread(void *vargp) {
 
 
 int main(int argc, char* argv[]) {
-  int n_thread = 20;
+  int n_thread = 4;
   pthread_t* tid = malloc(sizeof(pthread_t) * n_thread);
   int i;
     for (i = 0; i < n_thread; i++)
