@@ -348,7 +348,7 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
       int32_t result = 0;
       if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
-    	    printf("	PooledConnection::write_and_flush_mittcpu callback stream:%d\n",
+    	    printf("	RequestHandler::internal_retry stream:%d\n",
     	    		request_execution->stream());
       }
       else
@@ -444,6 +444,7 @@ void RequestExecution::on_write(Connection* connection) {
     if (timeout == 0) {
       request_handler_->execute();
     } else if (timeout > 0) {
+
       schedule_timer_.start(connection->loop(), timeout,
                             bind_callback(&RequestExecution::on_execute_next, this));
     }
