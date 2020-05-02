@@ -348,6 +348,8 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
       int32_t result = 0;
       if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
+    	    printf("	PooledConnection::write_and_flush_mittcpu callback stream:%d\n",
+    	    		request_execution->stream());
       }
       else
     	  result = connection->write(request_execution);

@@ -136,10 +136,10 @@ int32_t PooledConnection::write_and_flush_mittcpu(RequestCallback* callback) {
             connection_.get(), keyspace, RequestCallback::Ptr(callback)));
     result = connection_->write_and_flush_mittcpu(requestCallback);
     callback->setStream(requestCallback->stream());
-    printf("	callback stream:%d  requestCallback stream:%d\n",
-    		callback->stream(), requestCallback->stream());
   } else {
     result = connection_->write_and_flush_mittcpu(RequestCallback::Ptr(callback));
+    printf("	PooledConnection::write_and_flush_mittcpu callback stream:%d\n",
+    		callback->stream());
   }
 
 //  if (result > 0) {
