@@ -19,11 +19,6 @@
 
 #include "logger.hpp"
 
-#include <execinfo.h> // for backtrace
- #include <dlfcn.h>    // for dladdr
- #include <cxxabi.h>   // for __cxa_demangle
- #include <iostream>
-
 #include <execinfo.h>
 
 #define SSL_READ_SIZE 8192
@@ -414,46 +409,7 @@ void Socket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* 
   socket->handler_->alloc_buffer(suggested_size, buf);
 }
 
-// This function produces a stack backtrace with demangled function & method names.
- std::string Backtrace_meng(int skip = 1)
- {
-     void *callstack[128];
-     const int nMaxFrames = sizeof(callstack) / sizeof(callstack[0]);
-     char buf[1024];
-     int nFrames = backtrace(callstack, nMaxFrames);
-     char **symbols = backtrace_symbols(callstack, nFrames);
-
-     std::ostringstream trace_buf;
-     for (int i = skip; i < nFrames; i++) {
- //        printf("%s\n", symbols[i]);
-
-         Dl_info info;
-         if (dladdr(callstack[i], &info) && info.dli_sname) {
-             char *demangled = NULL;
-             int status = -1;
-             if (info.dli_sname[0] == '_')
-                 demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
-             snprintf(buf, sizeof(buf), "%-3d %*p %s + %zd\n",
-                      i, int(2 + sizeof(void*) * 2), callstack[i],
-                      status == 0 ? demangled :
-                      info.dli_sname == 0 ? symbols[i] : info.dli_sname,
-                      (char *)callstack[i] - (char *)info.dli_saddr);
-             free(demangled);
-         } else {
-             snprintf(buf, sizeof(buf), "%-3d %*p %s\n",
-                      i, int(2 + sizeof(void*) * 2), callstack[i], symbols[i]);
-         }
-         trace_buf << buf;
-     }
-     free(symbols);
-     if (nFrames == nMaxFrames)
-         trace_buf << "[truncated]\n";
-     return trace_buf.str();
- }
-
 void Socket::on_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
-
-	std::cout << Backtrace_meng() << std::endl;
   int stream_id = client->stream_id;
 //  printf ("Socket on_read n_read:%ld  stream_id:%d\n", nread, stream_id);
   Socket* socket = static_cast<Socket*>(client->data);
@@ -478,8 +434,6 @@ void Socket::handle_read_mittcpu(ssize_t nread, const uv_buf_t* buf, int stream_
 //  LOG_WARN("Socket read error '%s'", uv_strerror(nread));
 //  ScopedPtr<ConnectionHandler> connectionHandler = dynamic_cast<ScopedPtr<ConnectionHandler>>(handler_);
 //	printf ("Socket on_read n_read:%ld  stream_id:%d\n", nread, stream_id);
-
-
   ConnectionHandler* connectionHandler = dynamic_cast<ConnectionHandler*>(handler_.get());
   if (connectionHandler == NULL) {
 	  LOG_ERROR("handler is not connectionHandler!!!");
