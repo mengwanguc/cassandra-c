@@ -198,6 +198,11 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
 void RequestHandler::execute() {
   RequestExecution::Ptr request_execution(new RequestExecution(this));
   running_executions_++;
+  if (request_execution->current_host()->address_string().find("10.10.1.1") != std::string::npos){
+  } else {
+	  request_execution->failover_host_ = request_execution->current_host_;
+	  request_execution->next_host();
+  }
   internal_retry(request_execution.get());
 }
 
