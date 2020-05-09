@@ -31,6 +31,8 @@
 #include "session.hpp"
 #include <iostream>
 
+#include <string>
+
 #include <uv.h>
 
 using namespace datastax;
@@ -202,6 +204,9 @@ void RequestHandler::execute() {
 //  std::cout << "RequestHandler::execute for host"
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
+  if (request_execution->current_host()->address_string().find("10.10.1.1") != std::string::npos){
+	  printf("	address found!\n");
+  }
   internal_retry(request_execution.get());
 }
 
