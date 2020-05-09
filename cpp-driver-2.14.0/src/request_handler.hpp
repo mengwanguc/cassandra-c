@@ -288,6 +288,7 @@ public:
 
   int stream_id = 0;
   Host::Ptr failover_host_;
+  Host::Ptr current_host_;
 
 
 private:
@@ -313,7 +314,6 @@ private:
                                      const String& message);
 
 private:
-  Host::Ptr current_host_;
   Connection* connection_;
   Timer schedule_timer_;
   int num_retries_;
