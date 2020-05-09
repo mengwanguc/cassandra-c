@@ -66,9 +66,10 @@ QueryPlan* TokenAwarePolicy::new_query_plan(const String& keyspace, RequestHandl
             if (token_map != NULL) {
               CopyOnWriteHostVec replicas = token_map->get_replicas(keyspace, routing_key);
               if (replicas && !replicas->empty()) {
-                if (random_ != NULL) {
-                  random_shuffle(replicas->begin(), replicas->end(), random_);
-                }
+            	  printf("Dont shuffle...\n");
+//                if (random_ != NULL) {
+//                  random_shuffle(replicas->begin(), replicas->end(), random_);
+//                }
                 return new TokenAwareQueryPlan(
                     child_policy_.get(),
                     child_policy_->new_query_plan(keyspace, request_handler, token_map), replicas,
