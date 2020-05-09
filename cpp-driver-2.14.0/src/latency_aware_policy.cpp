@@ -43,6 +43,7 @@ void LatencyAwarePolicy::close_handles() { timer_.stop(); }
 QueryPlan* LatencyAwarePolicy::new_query_plan(const String& keyspace,
                                               RequestHandler* request_handler,
                                               const TokenMap* token_map) {
+  printf("LatencyAwarePolicy::new_query_plan\n");
   return new LatencyAwareQueryPlan(
       this, child_policy_->new_query_plan(keyspace, request_handler, token_map));
 }

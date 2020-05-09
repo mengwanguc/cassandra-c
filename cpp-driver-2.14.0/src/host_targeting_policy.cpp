@@ -31,6 +31,7 @@ void HostTargetingPolicy::init(const SharedRefPtr<Host>& connected_host, const c
 QueryPlan* HostTargetingPolicy::new_query_plan(const String& keyspace,
                                                RequestHandler* request_handler,
                                                const TokenMap* token_map) {
+  printf("HostTargetingPolicy\n");
   QueryPlan* child_plan = child_policy_->new_query_plan(keyspace, request_handler, token_map);
   if (request_handler == NULL || !request_handler->preferred_address().is_valid()) {
     return child_plan;
