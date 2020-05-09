@@ -280,6 +280,8 @@ public:
   virtual void on_retry_current_host();
   virtual void on_retry_next_host();
 
+  RequestHandler::Ptr request_handler_;
+
   Host::Ptr current_host_;
   Host::Ptr failover_host_;
 
@@ -305,7 +307,6 @@ private:
                                      const String& message);
 
 private:
-  RequestHandler::Ptr request_handler_;
   Connection* connection_;
   Timer schedule_timer_;
   int num_retries_;
