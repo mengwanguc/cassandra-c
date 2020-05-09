@@ -202,17 +202,18 @@ void RequestHandler::execute() {
   std::cout << "RequestHandler::execute for host"
 		  << request_execution->current_host()->address_string()
 		  << std::endl;
-  std::cout << "RequestHandler::next host"
-		  << next_host(RequestHandler::Protected())->address_string()
+  request_execution->next_host();
+  std::cout << "RequestHandler::execute for host"
+		  << request_execution->current_host()->address_string()
 		  << std::endl;
-  std::cout << "RequestHandler::next host"
- 		  << next_host(RequestHandler::Protected())->address_string()
- 		  << std::endl;
-  std::cout << "RequestHandler::next host"
- 		  << next_host(RequestHandler::Protected())->address_string()
- 		  << std::endl;
+  request_execution->next_host();
+  std::cout << "RequestHandler::execute for host"
+		  << request_execution->current_host()->address_string()
+		  << std::endl;
 
   internal_retry(request_execution.get());
+
+
 }
 
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
