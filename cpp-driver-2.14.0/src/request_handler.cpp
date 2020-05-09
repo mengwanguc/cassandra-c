@@ -190,8 +190,10 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
 	printf("SingleHostQueryPlan\n");
     query_plan_.reset(new SingleHostQueryPlan(*request()->host()));
   } else {
-	printf("load_balancing_policy\n");
     query_plan_.reset(profile.load_balancing_policy()->new_query_plan(keyspace, this, token_map));
+	std::cout << "load_balancing_policy"
+			<< query_plan_->compute_next()->address_string()
+		    << std::endl;
   }
 
   execution_plan_.reset(
