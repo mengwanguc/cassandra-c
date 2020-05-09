@@ -194,7 +194,7 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
 	std::cout << "load_balancing_policy: "
 			<< query_plan_->compute_next()->address_string()
 			<< "  class:"
-			<< typeid(profile.load_balancing_policy()).name()
+			<< typeid(profile.load_balancing_policy().get()).name()
 		    << std::endl;
   }
 
