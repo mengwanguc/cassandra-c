@@ -85,6 +85,8 @@ QueryPlan* TokenAwarePolicy::new_query_plan(const String& keyspace, RequestHandl
         break;
     }
   }
+  printf("TokenAwarePolicy.child_policy\n");
+
   return child_policy_->new_query_plan(keyspace, request_handler, token_map);
 }
 
