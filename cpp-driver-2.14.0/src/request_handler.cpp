@@ -187,8 +187,10 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
   // If a specific host is set then bypass the load balancing policy and use a
   // specialized single host query plan.
   if (request()->host()) {
+	printf("SingleHostQueryPlan\n");
     query_plan_.reset(new SingleHostQueryPlan(*request()->host()));
   } else {
+	printf("load_balancing_policy\n");
     query_plan_.reset(profile.load_balancing_policy()->new_query_plan(keyspace, this, token_map));
   }
 
@@ -202,14 +204,14 @@ void RequestHandler::execute() {
   std::cout << "RequestHandler::execute for host"
 		  << request_execution->current_host()->address_string()
 		  << std::endl;
-  request_execution->next_host();
-  std::cout << "RequestHandler::execute for host"
-		  << request_execution->current_host()->address_string()
-		  << std::endl;
-  request_execution->next_host();
-  std::cout << "RequestHandler::execute for host"
-		  << request_execution->current_host()->address_string()
-		  << std::endl;
+//  request_execution->next_host();
+//  std::cout << "RequestHandler::execute for host"
+//		  << request_execution->current_host()->address_string()
+//		  << std::endl;
+//  request_execution->next_host();
+//  std::cout << "RequestHandler::execute for host"
+//		  << request_execution->current_host()->address_string()
+//		  << std::endl;
 
   internal_retry(request_execution.get());
 
