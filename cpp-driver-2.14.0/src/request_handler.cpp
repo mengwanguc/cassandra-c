@@ -205,7 +205,6 @@ void RequestHandler::execute() {
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
   if (request_execution->current_host()->address_string().find("10.10.1.1") != std::string::npos){
-	  request_execution->failover_host_ = NULL;
   } else {
 	  request_execution->failover_host_ = request_execution->current_host_;
 	  request_execution->next_host();
@@ -432,7 +431,7 @@ void RequestExecution::retry_current_host() {
 
 void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
-  if (this->failover_host_ == NULL)
+  if (!this->failover_host_)
 	  next_host();
   else
 	  this->current_host_ = this->failover_host_;
