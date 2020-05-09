@@ -53,6 +53,7 @@ void TokenAwarePolicy::init(const Host::Ptr& connected_host, const HostMap& host
 
 QueryPlan* TokenAwarePolicy::new_query_plan(const String& keyspace, RequestHandler* request_handler,
                                             const TokenMap* token_map) {
+  printf("TokenAwarePolicy\n");
   if (request_handler != NULL) {
     const RoutableRequest* request =
         static_cast<const RoutableRequest*>(request_handler->request());
