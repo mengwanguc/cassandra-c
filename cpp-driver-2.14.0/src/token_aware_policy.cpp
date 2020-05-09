@@ -53,7 +53,6 @@ void TokenAwarePolicy::init(const Host::Ptr& connected_host, const HostMap& host
 
 QueryPlan* TokenAwarePolicy::new_query_plan(const String& keyspace, RequestHandler* request_handler,
                                             const TokenMap* token_map) {
-  printf("TokenAwarePolicy\n");
   if (request_handler != NULL) {
     const RoutableRequest* request =
         static_cast<const RoutableRequest*>(request_handler->request());
@@ -67,10 +66,9 @@ QueryPlan* TokenAwarePolicy::new_query_plan(const String& keyspace, RequestHandl
             if (token_map != NULL) {
               CopyOnWriteHostVec replicas = token_map->get_replicas(keyspace, routing_key);
               if (replicas && !replicas->empty()) {
-            	  printf("Dont shuffle...\n");
-//                if (random_ != NULL) {
-//                  random_shuffle(replicas->begin(), replicas->end(), random_);
-//                }
+                if (random_ != NULL) {
+                  random_shuffle(replicas->begin(), replicas->end(), random_);
+                }
                 return new TokenAwareQueryPlan(
                     child_policy_.get(),
                     child_policy_->new_query_plan(keyspace, request_handler, token_map), replicas,
@@ -85,8 +83,6 @@ QueryPlan* TokenAwarePolicy::new_query_plan(const String& keyspace, RequestHandl
         break;
     }
   }
-  printf("TokenAwarePolicy.child_policy\n");
-
   return child_policy_->new_query_plan(keyspace, request_handler, token_map);
 }
 

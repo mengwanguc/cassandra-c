@@ -85,7 +85,6 @@ CassHostDistance DCAwarePolicy::distance(const Host::Ptr& host) const {
 
 QueryPlan* DCAwarePolicy::new_query_plan(const String& keyspace, RequestHandler* request_handler,
                                          const TokenMap* token_map) {
-  printf("DCAwarePolicy\n");
   CassConsistency cl =
       request_handler != NULL ? request_handler->consistency() : CASS_DEFAULT_CONSISTENCY;
   return new DCAwareQueryPlan(this, cl, index_++);
