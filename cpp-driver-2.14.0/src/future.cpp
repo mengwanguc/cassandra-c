@@ -101,6 +101,7 @@ int cass_future_error_code(CassFuture* future) {
   if (error != NULL) {
     return error->code;
   } else {
+	printf("failover_count:%d\n", future->failover_count);
     return -(future->failover_count);
   }
 }
