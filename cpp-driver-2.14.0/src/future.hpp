@@ -53,6 +53,8 @@ public:
   Future(Type type)
       : is_set_(false)
       , type_(type)
+      , failover_count (0)
+      , spe_count(0)
       , callback_(NULL) {
     uv_mutex_init(&mutex_);
     uv_cond_init(&cond_);
