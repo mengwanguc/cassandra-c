@@ -154,7 +154,6 @@ public:
 
   int deadline;
 
-  SharedRefPtr<ResponseFuture> future_;
 
 public:
   class Protected {
@@ -195,6 +194,8 @@ public:
 public:
   void on_timeout(Timer* timer);
   RequestWrapper wrapper_;
+
+  SharedRefPtr<ResponseFuture> future_;
 
 private:
   void stop_request();
