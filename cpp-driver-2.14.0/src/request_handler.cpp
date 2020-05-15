@@ -687,6 +687,7 @@ void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessa
       } else {
         retry_next_host();
       }
+      request_handler_->future_->failover_count += 1;
       num_retries_++;
       break;
 

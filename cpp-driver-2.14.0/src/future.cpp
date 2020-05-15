@@ -96,12 +96,12 @@ const CassErrorResult* cass_future_get_error_result(CassFuture* future) {
   return CassErrorResult::to(static_cast<ErrorResponse*>(response.get()));
 }
 
-CassError cass_future_error_code(CassFuture* future) {
+int cass_future_error_code(CassFuture* future) {
   const Future::Error* error = future->error();
   if (error != NULL) {
     return error->code;
   } else {
-    return CASS_OK;
+    return -(future->failover_count);
   }
 }
 

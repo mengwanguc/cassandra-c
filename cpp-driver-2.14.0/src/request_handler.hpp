@@ -154,6 +154,8 @@ public:
 
   int deadline;
 
+  SharedRefPtr<ResponseFuture> future_;
+
 public:
   class Protected {
     friend class RequestExecution;
@@ -200,7 +202,7 @@ private:
 
 private:
 
-  SharedRefPtr<ResponseFuture> future_;
+
 
   bool is_done_;
   int running_executions_;

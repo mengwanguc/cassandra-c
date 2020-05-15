@@ -4826,7 +4826,7 @@ cass_future_get_prepared(CassFuture* future);
  *
  * @see cass_error_desc()
  */
-CASS_EXPORT CassError
+CASS_EXPORT int
 cass_future_error_code(CassFuture* future);
 
 /**

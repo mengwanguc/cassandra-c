@@ -89,6 +89,8 @@ CassFuture* cass_session_prepare_from_existing(CassSession* session, CassStateme
 
 CassFuture* cass_session_execute(CassSession* session, const CassStatement* statement) {
   Future::Ptr future(session->execute(Request::ConstPtr(statement->from())));
+  future->failover_count = 0;
+  future->spe_count = 0;
   future->inc_ref();
   return CassFuture::to(future.get());
 }

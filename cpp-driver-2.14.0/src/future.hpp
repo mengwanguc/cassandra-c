@@ -65,6 +65,9 @@ public:
 
   Type type() const { return type_; }
 
+  int failover_count;
+  int spe_count;
+
   bool ready() {
     ScopedMutex lock(&mutex_);
     return is_set_;
