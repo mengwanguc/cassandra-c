@@ -4826,10 +4826,10 @@ cass_future_get_prepared(CassFuture* future);
  *
  * @see cass_error_desc()
  */
-CASS_EXPORT int
+CASS_EXPORT CassError
 cass_future_error_code(CassFuture* future);
 
-CASS_EXPORT int
+CASS_EXPORT CassError
 cass_future_error_code_mittcpu(CassFuture* future, int* failover_count);
 
 /**
