@@ -50,7 +50,8 @@ void cass_session_free(CassSession* session) {
 }
 
 CassFuture* cass_session_connect(CassSession* session, const CassCluster* cluster) {
-  return cass_session_connect_keyspace(session, cluster, "");
+	CassFuture* cassFuture = cass_session_connect_keyspace(session, cluster, "");
+	return cassFuture;
 }
 
 CassFuture* cass_session_connect_keyspace(CassSession* session, const CassCluster* cluster,
