@@ -96,7 +96,16 @@ const CassErrorResult* cass_future_get_error_result(CassFuture* future) {
   return CassErrorResult::to(static_cast<ErrorResponse*>(response.get()));
 }
 
-CassError cass_future_error_code(CassFuture* future, int* failover_count) {
+CassError cass_future_error_code(CassFuture* future) {
+  const Future::Error* error = future->error();
+  if (error != NULL) {
+    return error->code;
+  } else {
+    return CASS_OK;
+  }
+}
+
+CassError cass_future_error_code_mittcpu(CassFuture* future, int* failover_count) {
   const Future::Error* error = future->error();
   *failover_count = future->failover_count;
   if (error != NULL) {
@@ -105,6 +114,7 @@ CassError cass_future_error_code(CassFuture* future, int* failover_count) {
     return CASS_OK;
   }
 }
+
 
 void cass_future_error_message(CassFuture* future, const char** message, size_t* message_length) {
   const Future::Error* error = future->error();

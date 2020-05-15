@@ -4827,7 +4827,10 @@ cass_future_get_prepared(CassFuture* future);
  * @see cass_error_desc()
  */
 CASS_EXPORT int
-cass_future_error_code(CassFuture* future, int* failover_count);
+cass_future_error_code(CassFuture* future);
+
+CASS_EXPORT int
+cass_future_error_code_mittcpu(CassFuture* future, int* failover_count);
 
 /**
  * Gets the error message from future. If the future is not ready this method will
