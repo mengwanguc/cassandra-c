@@ -334,6 +334,8 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
 
   RequestCallback::Ptr callback;
 
+  printf("	Connection::on_read_mittcpu  stream id:%d\n", stream_id);
+
   if (stream_manager_.get(stream_id, callback)) {
     switch (callback->state()) {
       case RequestCallback::REQUEST_STATE_READING:
