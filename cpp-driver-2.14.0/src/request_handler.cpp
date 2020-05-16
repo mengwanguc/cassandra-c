@@ -429,6 +429,7 @@ void RequestExecution::retry_current_host() {
 
 void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
+  request_handler_->future_->failover_count += 1;
   next_host();
 //  printf("	doing failover to next host!!!!!!\n");
   retry_current_host();
