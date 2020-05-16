@@ -318,7 +318,9 @@ void RequestHandler::on_timeout(Timer* timer) {
 void RequestExecution::on_timeout(Timer* timer) {
   std::cout << "	on_timeout...timeout:" << request_handler_->wrapper_.request_timeout_ms()
 		  << " host:" << current_host_->address_string()
-		  << " stream id:" << stream() << std::endl;
+		  << " stream id:" << stream() <<
+		  << " is retry:" << this->is_retry
+		  << std::endl;
   this->request_handler_->on_timeout(timer);
 }
 
