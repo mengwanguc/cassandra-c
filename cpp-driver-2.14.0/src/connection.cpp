@@ -131,6 +131,10 @@ Connection::~Connection() { host_->decrement_connection_count(); }
 
 int32_t Connection::write(const RequestCallback::Ptr& callback) {
   int stream = stream_manager_.acquire(callback);
+
+  if (callback->is_retry == 1)
+	  printf("retrying... stream id:%d\n", stream);
+
   if (stream < 0) {
     return Request::REQUEST_ERROR_NO_AVAILABLE_STREAM_IDS;
   }

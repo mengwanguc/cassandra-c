@@ -206,6 +206,7 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
+  request_execution->is_retry = 1;
   internal_retry(request_execution);
 }
 
