@@ -1449,6 +1449,7 @@ static void uv__read(uv_stream_t* stream) {
 //    		  printf("stream_id == 2147483647!!!\n");
     		  stream_id = 0;
     	  }
+    	  printf("	EBUSY stream id:%d\n", stream_id);
     	  stream->stream_id = stream_id;
     	  stream->read_cb(stream, -16, &buf);
     	  return;

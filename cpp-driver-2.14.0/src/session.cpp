@@ -51,7 +51,6 @@ void cass_session_free(CassSession* session) {
 
 CassFuture* cass_session_connect(CassSession* session, const CassCluster* cluster) {
 	CassFuture* cassFuture = cass_session_connect_keyspace(session, cluster, "");
-	printf("cassFuture failover:%d\n", cassFuture->failover_count);
 	return cassFuture;
 }
 
