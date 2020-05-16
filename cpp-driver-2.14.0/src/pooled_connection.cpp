@@ -134,6 +134,7 @@ int32_t PooledConnection::write_and_flush_mittcpu(RequestCallback* callback) {
               static_cast<void*>(connection_.get()), static_cast<void*>(pool_));
     RequestCallback::Ptr requestCallback = RequestCallback::Ptr(new ChainedSetKeyspaceCallback(
             connection_.get(), keyspace, RequestCallback::Ptr(callback)));
+    requestCallback->last_retry = callback->last_retry;
     result = connection_->write_and_flush_mittcpu(requestCallback);
     callback->setStream(requestCallback->stream());
   } else {

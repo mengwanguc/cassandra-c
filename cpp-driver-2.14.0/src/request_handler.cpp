@@ -206,7 +206,7 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
-  request_execution->is_retry = 1;
+  request_execution->last_retry = 1;
   internal_retry(request_execution);
 }
 
@@ -319,7 +319,7 @@ void RequestExecution::on_timeout(Timer* timer) {
   std::cout << "	on_timeout...timeout:" << request_handler_->wrapper_.request_timeout_ms()
 		  << " host:" << current_host_->address_string()
 		  << " stream id:" << stream()
-		  << " is retry:" << this->is_retry
+		  << " last retry:" << this->last_retry
 		  << std::endl;
   this->request_handler_->on_timeout(timer);
 }
@@ -350,6 +350,8 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
     if (connection) {
       int32_t result = 0;
       if (request_execution->request_handler_->deadline == 1) {
+    	  result = connection->write_and_flush_mittcpu(request_execution);
+      } else if (request_execution->last_retry == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
       }
       else
