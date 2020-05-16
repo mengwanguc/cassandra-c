@@ -132,7 +132,7 @@ Connection::~Connection() { host_->decrement_connection_count(); }
 int32_t Connection::write(const RequestCallback::Ptr& callback) {
   int stream = stream_manager_.acquire(callback);
 
-  if (callback->is_retry == 1)
+  if (callback->last_retry == 1)
 	  printf("retrying... stream id:%d\n", stream);
 
   if (stream < 0) {
