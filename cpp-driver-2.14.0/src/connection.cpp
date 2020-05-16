@@ -132,8 +132,8 @@ Connection::~Connection() { host_->decrement_connection_count(); }
 int32_t Connection::write(const RequestCallback::Ptr& callback) {
   int stream = stream_manager_.acquire(callback);
 
-  if (callback->last_retry == 1)
-	  printf("retrying... stream id:%d\n", stream);
+//  if (callback->last_retry == 1)
+//	  printf("retrying... stream id:%d\n", stream);
 
   if (stream < 0) {
     return Request::REQUEST_ERROR_NO_AVAILABLE_STREAM_IDS;
@@ -342,7 +342,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
 
   RequestCallback::Ptr callback;
 
-  printf("	Connection::on_read_mittcpu  stream id:%d\n", stream_id);
+//  printf("	Connection::on_read_mittcpu  stream id:%d\n", stream_id);
 
   if (stream_manager_.get(stream_id, callback)) {
     switch (callback->state()) {
@@ -356,7 +356,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
         break;
 
       case RequestCallback::REQUEST_STATE_WRITING:
-      	printf("	REQUEST_STATE_READ_BEFORE_WRITE.........\n");
+//      	printf("	REQUEST_STATE_READ_BEFORE_WRITE.........\n");
         // There are cases when the read callback will happen
         // before the write callback. If this happens we have
         // to allow the write callback to finish the request.

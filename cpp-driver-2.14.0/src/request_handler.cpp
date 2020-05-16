@@ -316,11 +316,11 @@ void RequestHandler::on_timeout(Timer* timer) {
 }
 
 void RequestExecution::on_timeout(Timer* timer) {
-  std::cout << "	on_timeout...timeout:" << request_handler_->wrapper_.request_timeout_ms()
-		  << " host:" << current_host_->address_string()
-		  << " stream id:" << stream()
-		  << " last retry:" << this->last_retry
-		  << std::endl;
+//  std::cout << "	on_timeout...timeout:" << request_handler_->wrapper_.request_timeout_ms()
+//		  << " host:" << current_host_->address_string()
+//		  << " stream id:" << stream()
+//		  << " last retry:" << this->last_retry
+//		  << std::endl;
   this->request_handler_->on_timeout(timer);
 }
 
@@ -709,7 +709,7 @@ void RequestExecution::on_error_response(Connection* connection, ResponseMessage
 
 
 void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessage* response) {
-  printf("RequestExecution::on_mittcpu_response stream id:%d\n", response->stream_id);
+//  printf("RequestExecution::on_mittcpu_response stream id:%d\n", response->stream_id);
   // Process retry decision
   num_retries_++;
   retry_next_host();
