@@ -331,6 +331,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
 
   ScopedPtr<ResponseMessage> response(response_.release());
   response_.reset(new ResponseMessage());
+  response->stream_id = stream_id;
 
   RequestCallback::Ptr callback;
 

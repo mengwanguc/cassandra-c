@@ -89,7 +89,9 @@ public:
       , header_buffer_pos_(header_buffer_)
       , is_body_ready_(false)
       , is_body_error_(false)
-      , body_buffer_pos_(NULL) {}
+      , body_buffer_pos_(NULL) {
+	  stream_id = 0;
+  }
 
   uint8_t flags() const { return flags_; }
 
@@ -104,6 +106,8 @@ public:
   ssize_t decode(const char* input, size_t size);
 
   void setOpcodeMittcpu();
+
+  int stream_id;
 
 private:
   bool allocate_body(int8_t opcode);
