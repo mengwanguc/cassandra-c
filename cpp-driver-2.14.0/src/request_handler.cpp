@@ -665,48 +665,54 @@ void RequestExecution::on_error_response(Connection* connection, ResponseMessage
 }
 
 
+//void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessage* response) {
+//  ErrorResponse* error = static_cast<ErrorResponse*>(response->response_body().get());
+//
+//  RetryPolicy::RetryDecision decision = RetryPolicy::RetryDecision::return_error();
+//
+//  if (retry_policy()) {
+//    decision = retry_policy()->on_unavailable(
+//        request(), CASS_CONSISTENCY_ONE, 1, 0, num_retries_);
+//  }
+//
+//
+//  printf("RequestExecution::on_mittcpu_response stream id:%d\n", response->stream_id);
+//  // Process retry decision
+//  switch (decision.type()) {
+//    case RetryPolicy::RetryDecision::RETURN_ERROR:
+//      printf("RetryPolicy::RetryDecision::RETURN_ERROR stream id:%d\n", response->stream_id);
+//      set_error_with_error_response(
+//          response->response_body(),
+//          static_cast<CassError>(CASS_ERROR(CASS_ERROR_SOURCE_SERVER, CQL_ERROR_UNAVAILABLE)),
+//          error->message().to_string());
+//      break;
+//
+//    case RetryPolicy::RetryDecision::RETRY:
+//      set_retry_consistency(decision.retry_consistency());
+//      if (decision.retry_current_host()) {
+//        retry_current_host();
+//      } else {
+//        retry_next_host();
+//      }
+//      request_handler_->future_->failover_count += 1;
+//      printf("RetryPolicy::RetryDecision::RETRY stream id:%d\n", response->stream_id);
+//      num_retries_++;
+//      break;
+//
+//    case RetryPolicy::RetryDecision::IGNORE:
+//      printf("RetryPolicy::RetryDecision::IGNORE stream id:%d\n", response->stream_id);
+//      set_response(Response::Ptr(new ResultResponse()));
+//      break;
+//  }
+//}
+
+
 void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessage* response) {
-  ErrorResponse* error = static_cast<ErrorResponse*>(response->response_body().get());
-
-  RetryPolicy::RetryDecision decision = RetryPolicy::RetryDecision::return_error();
-
-  if (retry_policy()) {
-    decision = retry_policy()->on_unavailable(
-        request(), CASS_CONSISTENCY_ONE, 1, 0, num_retries_);
-  }
-
-
   printf("RequestExecution::on_mittcpu_response stream id:%d\n", response->stream_id);
   // Process retry decision
-  switch (decision.type()) {
-    case RetryPolicy::RetryDecision::RETURN_ERROR:
-      printf("RetryPolicy::RetryDecision::RETURN_ERROR stream id:%d\n", response->stream_id);
-      set_error_with_error_response(
-          response->response_body(),
-          static_cast<CassError>(CASS_ERROR(CASS_ERROR_SOURCE_SERVER, CQL_ERROR_UNAVAILABLE)),
-          error->message().to_string());
-      break;
-
-    case RetryPolicy::RetryDecision::RETRY:
-      set_retry_consistency(decision.retry_consistency());
-      if (decision.retry_current_host()) {
-        retry_current_host();
-      } else {
-        retry_next_host();
-      }
-      request_handler_->future_->failover_count += 1;
-      printf("RetryPolicy::RetryDecision::RETRY stream id:%d\n", response->stream_id);
-      num_retries_++;
-      break;
-
-    case RetryPolicy::RetryDecision::IGNORE:
-      printf("RetryPolicy::RetryDecision::IGNORE stream id:%d\n", response->stream_id);
-      set_response(Response::Ptr(new ResultResponse()));
-      break;
-  }
+  num_retries_++;
+  retry_next_host();
 }
-
-
 
 
 
