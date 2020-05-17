@@ -199,9 +199,8 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
 void RequestHandler::execute() {
   RequestExecution::Ptr request_execution(new RequestExecution(this));
   running_executions_++;
-  std::cout << "RequestHandler::execute for host"
-		  << request_execution->current_host()->address_string()
-		  << std::endl;
+  for (int i = 0; i < 3; i++)
+    future_->server_id[i] = 0;
   internal_retry(request_execution.get());
 }
 
