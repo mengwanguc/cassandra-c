@@ -199,8 +199,8 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
 void RequestHandler::execute() {
   RequestExecution::Ptr request_execution(new RequestExecution(this));
   running_executions_++;
-  for (int i = 0; i < 3; i++)
-    future_->server_id[i] = 0;
+//  for (int i = 0; i < 3; i++)
+//    future_->server_id[i] = 0;
   internal_retry(request_execution.get());
 }
 
