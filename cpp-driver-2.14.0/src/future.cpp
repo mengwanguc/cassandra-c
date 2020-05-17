@@ -109,8 +109,8 @@ CassError cass_future_error_code_mittcpu(CassFuture* future, int* failover_count
   const Future::Error* error = future->error();
   *failover_count = future->failover_count;
   server_id[0] = future->server_id[0];
-  server_id[0] = future->server_id[0];
-  server_id[0] = future->server_id[0];
+  server_id[1] = future->server_id[1];
+  server_id[2] = future->server_id[2];
   if (error != NULL) {
     return error->code;
   } else {
