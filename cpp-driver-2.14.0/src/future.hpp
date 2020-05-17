@@ -56,6 +56,9 @@ public:
       , callback_(NULL) {
 	  failover_count = 0;
 	  spe_count = 0;
+	  server_id[0] = 0;
+	  server_id[1] = 0;
+	  server_id[2] = 0;
     uv_mutex_init(&mutex_);
     uv_cond_init(&cond_);
   }
@@ -69,6 +72,7 @@ public:
 
   int failover_count = 0;
   int spe_count = 0;
+  int server_id[3];
 
   bool ready() {
     ScopedMutex lock(&mutex_);

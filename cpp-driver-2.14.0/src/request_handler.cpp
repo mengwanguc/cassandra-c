@@ -202,6 +202,9 @@ void RequestHandler::execute() {
   std::cout << "RequestHandler::execute for host"
 		  << request_execution->current_host()->address_string()
 		  << std::endl;
+  if (request_execution->current_host()->address_string().find("10.10.1.1") != std::string::npos) {
+      std::cout << "found!" << '\n';
+  }
   internal_retry(request_execution.get());
 }
 
