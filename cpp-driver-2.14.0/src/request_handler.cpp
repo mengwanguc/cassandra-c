@@ -206,7 +206,6 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
-  request_execution->last_retry = 1;
   internal_retry(request_execution);
 }
 
@@ -430,6 +429,8 @@ void RequestExecution::retry_current_host() {
 void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
   request_handler_->future_->failover_count += 1;
+  if (request_handler_->future_->failover_count == 2)
+      last_retry = 1;
   next_host();
 //  printf("	doing failover to next host!!!!!!\n");
   retry_current_host();
