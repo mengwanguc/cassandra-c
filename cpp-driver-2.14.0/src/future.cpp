@@ -105,9 +105,12 @@ CassError cass_future_error_code(CassFuture* future) {
   }
 }
 
-CassError cass_future_error_code_mittcpu(CassFuture* future, int* failover_count) {
+CassError cass_future_error_code_mittcpu(CassFuture* future, int* failover_count, int* server_id) {
   const Future::Error* error = future->error();
   *failover_count = future->failover_count;
+  server_id[0] = future->server_id[0];
+  server_id[0] = future->server_id[0];
+  server_id[0] = future->server_id[0];
   if (error != NULL) {
     return error->code;
   } else {

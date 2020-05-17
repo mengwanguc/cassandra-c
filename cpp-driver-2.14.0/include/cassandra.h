@@ -4830,7 +4830,7 @@ CASS_EXPORT CassError
 cass_future_error_code(CassFuture* future);
 
 CASS_EXPORT CassError
-cass_future_error_code_mittcpu(CassFuture* future, int* failover_count);
+cass_future_error_code_mittcpu(CassFuture* future, int* failover_count, int* server_id);
 
 /**
  * Gets the error message from future. If the future is not ready this method will

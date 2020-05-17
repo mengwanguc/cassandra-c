@@ -202,9 +202,6 @@ void RequestHandler::execute() {
   std::cout << "RequestHandler::execute for host"
 		  << request_execution->current_host()->address_string()
 		  << std::endl;
-  if (request_execution->current_host()->address_string().find("10.10.1.1") != std::string::npos) {
-      std::cout << "found!" << '\n';
-  }
   internal_retry(request_execution.get());
 }
 
@@ -343,6 +340,14 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
                   ? request_execution->current_host()->address_string().c_str()
                   : "<no current host>");
     return;
+  }
+
+  if (request_execution->current_host()->address_string().find("10.10.1.1") != std::string::npos) {
+      future_->server_id[future_->failover_count] = 1;
+  } else if (request_execution->current_host()->address_string().find("10.10.1.2") != std::string::npos) {
+      future_->server_id[future_->failover_count] = 2;
+  } else if (request_execution->current_host()->address_string().find("10.10.1.3") != std::string::npos) {
+      future_->server_id[future_->failover_count] = 3;
   }
 
   bool is_done = false;
