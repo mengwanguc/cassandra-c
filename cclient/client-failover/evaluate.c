@@ -15,13 +15,15 @@ void on_result(CassFuture* result_future, void* data) {
     struct timespec end;
     uint64_t diff;
     int failover_count;
+    int server_id[3];
 
 
-    if (cass_future_error_code_mittcpu(result_future, &failover_count) == CASS_OK) {
+    if (cass_future_error_code_mittcpu(result_future, &failover_count, server_id) == CASS_OK) {
       clock_gettime(CLOCK_MONOTONIC, &end);
 
       diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-      printf("%llu  %d\n", (long long unsigned int) diff, failover_count);
+      printf("%llu  +%d  -%d--%d---%d\n", (long long unsigned int) diff, failover_count,
+             server_id[0], server_id[1], server_id[2]);
       /* Retrieve result set and get the first row */
 /*      const CassResult* result = cass_future_get_result(result_future);
       const CassRow* row = cass_result_first_row(result);
