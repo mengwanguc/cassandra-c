@@ -422,15 +422,16 @@ void RequestExecution::retry_current_host() {
   // Reset the request so it can be executed again
   set_state(REQUEST_STATE_NEW);
 
-  request_handler_->deadline = 0;
   request_handler_->retry(this, RequestHandler::Protected());
 }
 
 void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
   request_handler_->future_->failover_count += 1;
-  if (request_handler_->future_->failover_count == 2)
+  if (request_handler_->future_->failover_count == 2) {
+	  request_handler_->deadline = 0;
       last_retry = 1;
+  }
   next_host();
 //  printf("	doing failover to next host!!!!!!\n");
   retry_current_host();
