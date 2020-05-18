@@ -22,6 +22,7 @@
 #include "session.hpp"
 #include "tracing_data_handler.hpp"
 #include "utils.hpp"
+#include <iostream>
 
 using namespace datastax;
 using namespace datastax::internal;
@@ -552,7 +553,7 @@ int RequestProcessor::process_requests(uint64_t processing_time) {
   while (request_queue_->dequeue(request_handler)) {
     if (request_handler) {
       const String& profile_name = request_handler->request()->execution_profile_name();
-      std::cout << profile_name << std::out << std::endl;
+      std::cout << profile_name << std::cout << std::endl;
       const ExecutionProfile* profile(execution_profile(profile_name));
       if (profile) {
         if (!profile_name.empty()) {
