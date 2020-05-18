@@ -87,6 +87,7 @@ QueryPlan* DCAwarePolicy::new_query_plan(const String& keyspace, RequestHandler*
                                          const TokenMap* token_map) {
   CassConsistency cl =
       request_handler != NULL ? request_handler->consistency() : CASS_DEFAULT_CONSISTENCY;
+  printf("new DCAwareQueryPlan...\n");
   return new DCAwareQueryPlan(this, cl, index_++);
 }
 

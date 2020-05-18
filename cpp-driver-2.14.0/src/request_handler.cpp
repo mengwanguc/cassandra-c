@@ -189,6 +189,7 @@ void RequestHandler::init(const ExecutionProfile& profile, ConnectionPoolManager
   if (request()->host()) {
     query_plan_.reset(new SingleHostQueryPlan(*request()->host()));
   } else {
+	printf("resetting query plan...\n");
     query_plan_.reset(profile.load_balancing_policy()->new_query_plan(keyspace, this, token_map));
   }
 
