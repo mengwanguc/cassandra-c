@@ -213,7 +213,7 @@ static const Host::Ptr& get_next_host_bounded(const CopyOnWriteHostVec& hosts, s
 }
 
 static size_t get_hosts_size(const CopyOnWriteHostVec& hosts) { return hosts->size(); }
-
+al
 DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, CassConsistency cl,
                                                   size_t start_index)
     : policy_(policy)
@@ -221,7 +221,7 @@ DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, C
     , hosts_(policy_->local_dc_live_hosts_)
     , local_remaining_(get_hosts_size(hosts_))
     , remote_remaining_(0)
-    , index_(0) {}
+    , index_(1) {}
 
 Host::Ptr DCAwarePolicy::DCAwareQueryPlan::compute_next() {
   while (local_remaining_ > 0) {
