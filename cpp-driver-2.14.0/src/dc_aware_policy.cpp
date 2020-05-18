@@ -223,8 +223,7 @@ DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, C
     , local_remaining_(get_hosts_size(hosts_))
     , remote_remaining_(0)
     , index_(start_index) {
-		printf("start_index:%d\n", start_index);
-	}
+		printf("start_index:%u\n", start_index);
 }
 
 Host::Ptr DCAwarePolicy::DCAwareQueryPlan::compute_next() {
