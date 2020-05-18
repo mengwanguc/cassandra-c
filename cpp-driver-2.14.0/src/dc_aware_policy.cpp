@@ -87,7 +87,6 @@ QueryPlan* DCAwarePolicy::new_query_plan(const String& keyspace, RequestHandler*
                                          const TokenMap* token_map) {
   CassConsistency cl =
       request_handler != NULL ? request_handler->consistency() : CASS_DEFAULT_CONSISTENCY;
-  printf("new DCAwareQueryPlan...\n");
   return new DCAwareQueryPlan(this, cl, index_++);
 }
 
@@ -222,10 +221,7 @@ DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, C
     , hosts_(policy_->local_dc_live_hosts_)
     , local_remaining_(get_hosts_size(hosts_))
     , remote_remaining_(0)
-//    , index_(start_index)
-    , index_(0)
-{
-}
+    , index_(start_index) {}
 
 Host::Ptr DCAwarePolicy::DCAwareQueryPlan::compute_next() {
   while (local_remaining_ > 0) {

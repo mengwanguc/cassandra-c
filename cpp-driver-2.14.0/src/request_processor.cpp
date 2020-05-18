@@ -22,7 +22,6 @@
 #include "session.hpp"
 #include "tracing_data_handler.hpp"
 #include "utils.hpp"
-#include <iostream>
 
 using namespace datastax;
 using namespace datastax::internal;
