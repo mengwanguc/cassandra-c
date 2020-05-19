@@ -208,7 +208,7 @@ void RequestHandler::execute_next() {
   printf("next_execution... failover_count:%d, running_executions_:%d\n",
 		  future_->failover_count, running_executions_);
 
-  if (future_->failover_count + running_executions_>= 3)
+  if (future_->failover_count > 0)
 	  return;
 
 
@@ -455,7 +455,7 @@ void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
   printf("retry_next_host... failover_count:%d, running_executions_:%d\n",
 		  request_handler_->future_->failover_count, request_handler_->running_executions_);
-  if (request_handler_->running_executions_ +  request_handler_->running_executions_>= 3)
+  if (request_handler_->running_executions_ > 1)
 	  return;
   request_handler_->future_->failover_count += 1;
   if (request_handler_->future_->failover_count == 2) {
