@@ -205,6 +205,7 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::execute_next() {
+  return;
   RequestExecution::Ptr request_execution(new RequestExecution(this));
   running_executions_++;
   request_execution->spe_retry = 1;
