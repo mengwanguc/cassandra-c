@@ -205,6 +205,10 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::execute_next() {
+  printf("next_execution... failover_count:%d, running_executions_:%d\n",
+		  future_->failover_count, running_executions_);
+
+
   return;
   RequestExecution::Ptr request_execution(new RequestExecution(this));
   running_executions_++;
@@ -230,7 +234,6 @@ void RequestHandler::start_request(uv_loop_t* loop, Protected, RequestExecution*
 Host::Ptr RequestHandler::next_host(Protected) { return query_plan_->compute_next(); }
 
 int64_t RequestHandler::next_execution(const Host::Ptr& current_host, Protected) {
-  printf("next_execution...\n");
   return execution_plan_->next_execution(current_host);
 }
 
