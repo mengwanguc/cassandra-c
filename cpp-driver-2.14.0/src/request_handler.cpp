@@ -209,7 +209,7 @@ void RequestHandler::execute_next() {
 		  future_->failover_count, running_executions_);
 
 
-  return;
+//  return;
   RequestExecution::Ptr request_execution(new RequestExecution(this));
   running_executions_++;
   request_execution->spe_retry = 1;
