@@ -208,7 +208,7 @@ void RequestHandler::execute_next() {
   printf("next_execution... failover_count:%d, running_executions_:%d\n",
 		  future_->failover_count, running_executions_);
 
-  if (failover_count > 0)
+  if (future_->failover_count > 0)
 	  return;
 
 
