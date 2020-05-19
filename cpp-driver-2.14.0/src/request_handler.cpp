@@ -465,6 +465,8 @@ void RequestExecution::on_write(Connection* connection) {
   }
   request_handler_->start_request(connection->loop(), RequestHandler::Protected(), this);
   if (request()->is_idempotent()) {
+	if (request_handler_->future_->failover_count > 0)
+		return;
     int64_t timeout = request_handler_->next_execution(current_host_, RequestHandler::Protected());
     if (timeout == 0) {
       request_handler_->execute();
