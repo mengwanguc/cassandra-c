@@ -455,6 +455,8 @@ void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
   printf("retry_next_host... failover_count:%d, running_executions_:%d\n",
 		  request_handler_->future_->failover_count, request_handler_->running_executions_);
+  if (request_handler_->running_executions_ > 1)
+	  return;
   request_handler_->future_->failover_count += 1;
   if (request_handler_->future_->failover_count == 2) {
 	  request_handler_->deadline = 0;
