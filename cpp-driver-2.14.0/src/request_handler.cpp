@@ -220,6 +220,7 @@ void RequestHandler::start_request(uv_loop_t* loop, Protected, RequestExecution*
 Host::Ptr RequestHandler::next_host(Protected) { return query_plan_->compute_next(); }
 
 int64_t RequestHandler::next_execution(const Host::Ptr& current_host, Protected) {
+  printf("next_execution...\n");
   return execution_plan_->next_execution(current_host);
 }
 
