@@ -221,7 +221,7 @@ DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, C
     , hosts_(policy_->local_dc_live_hosts_)
     , local_remaining_(get_hosts_size(hosts_))
     , remote_remaining_(0)
-    , index_(start_index) {}
+    , index_(1) {}
 
 Host::Ptr DCAwarePolicy::DCAwareQueryPlan::compute_next() {
   while (local_remaining_ > 0) {
