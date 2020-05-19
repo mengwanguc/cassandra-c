@@ -197,6 +197,8 @@ public:
   RequestWrapper wrapper_;
 
   SharedRefPtr<ResponseFuture> future_;
+  bool is_done_;
+  int running_executions_;
 
 private:
   void stop_request();
@@ -206,8 +208,7 @@ private:
 
 
 
-  bool is_done_;
-  int running_executions_;
+
 
   ScopedPtr<QueryPlan> query_plan_;
   ScopedPtr<SpeculativeExecutionPlan> execution_plan_;
