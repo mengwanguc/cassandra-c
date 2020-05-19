@@ -204,6 +204,15 @@ void RequestHandler::execute() {
   internal_retry(request_execution.get());
 }
 
+void RequestHandler::execute_next() {
+  RequestExecution::Ptr request_execution(new RequestExecution(this));
+  running_executions_++;
+  request_execution->spe_retry = 1;
+//  for (int i = 0; i < 3; i++)
+//    future_->server_id[i] = 0;
+  internal_retry(request_execution.get());
+}
+
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
   internal_retry(request_execution);
 }
@@ -358,7 +367,7 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
       int32_t result = 0;
       if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
-      } else if (request_execution->last_retry == 1) {
+      } else if (request_execution->last_retry == 1 || request_execution->spe_retry == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
       }
       else
@@ -417,7 +426,9 @@ RequestExecution::RequestExecution(RequestHandler* request_handler)
     , num_retries_(0)
     , start_time_ns_(uv_hrtime()) {}
 
-void RequestExecution::on_execute_next(Timer* timer) { request_handler_->execute(); }
+void RequestExecution::on_execute_next(Timer* timer) {
+	request_handler_->execute_next();
+}
 
 void RequestExecution::on_retry_current_host() { retry_current_host(); }
 
