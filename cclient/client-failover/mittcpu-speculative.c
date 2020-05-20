@@ -61,6 +61,7 @@ void *read_thread(void *vargp) {
     for (i = 0; i < 62500; i++) {
       const char* query = "SELECT name FROM cassDB.users WHERE id = 0df218dd-10fa-11ea-bf01-54271e04ce91";
       CassStatement* statement = cass_statement_new(query, 0);
+      cass_statement_set_is_idempotent(statement, cass_true);
       struct timespec *start = malloc(sizeof(struct timespec));
       clock_gettime(CLOCK_MONOTONIC, start);
 
@@ -94,6 +95,14 @@ int main(int argc, char* argv[]) {
 
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
+
+  cass_int64_t constant_delay_ms = 3;
+
+  int max_speculative_executions = 1;
+
+  cass_cluster_set_constant_speculative_execution_policy(cluster,
+                                                       constant_delay_ms,
+                                                       max_speculative_executions);
 
 //  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
 
