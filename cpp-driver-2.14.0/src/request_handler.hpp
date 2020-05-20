@@ -146,6 +146,7 @@ public:
             RequestListener* listener);
 
   void execute();
+  void execute_next();
 
   const RequestWrapper& wrapper() const { return wrapper_; }
   const Request* request() const { return wrapper_.request().get(); }
@@ -196,6 +197,8 @@ public:
   RequestWrapper wrapper_;
 
   SharedRefPtr<ResponseFuture> future_;
+  bool is_done_;
+  int running_executions_;
 
 private:
   void stop_request();
@@ -205,8 +208,7 @@ private:
 
 
 
-  bool is_done_;
-  int running_executions_;
+
 
   ScopedPtr<QueryPlan> query_plan_;
   ScopedPtr<SpeculativeExecutionPlan> execution_plan_;

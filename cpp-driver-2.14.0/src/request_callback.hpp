@@ -144,6 +144,7 @@ public:
   void notify_write(Connection* connection, int stream);
 
   int last_retry = 0;
+  int spe_retry = 0;
 
 public:
   // Called to retry a request on a different connection
