@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 
   cass_int64_t constant_delay_ms = 3;
 
-  int max_speculative_executions = 2;
+  int max_speculative_executions = 1;
 
   cass_cluster_set_constant_speculative_execution_policy(cluster,
                                                        constant_delay_ms,
