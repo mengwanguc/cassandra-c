@@ -42,7 +42,7 @@
 #include <unistd.h>
 #include <netinet/tcp.h>
 
-#define DEADLINE 2000
+#define DEADLINE 3000
 
 
 #if defined(__APPLE__)

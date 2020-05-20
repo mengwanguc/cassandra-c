@@ -204,6 +204,26 @@ void RequestHandler::execute() {
   internal_retry(request_execution.get());
 }
 
+void RequestHandler::execute_next() {
+//  printf("next_execution... failover_count:%d, running_executions_:%d\n",
+//		  future_->failover_count, running_executions_);
+
+  running_executions_++;
+  if (future_->failover_count > 0) {
+	  running_executions_--;
+	  return;
+  }
+
+
+//  return;
+  RequestExecution::Ptr request_execution(new RequestExecution(this));
+
+  request_execution->spe_retry = 1;
+//  for (int i = 0; i < 3; i++)
+//    future_->server_id[i] = 0;
+  internal_retry(request_execution.get());
+}
+
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
   internal_retry(request_execution);
 }
@@ -357,7 +377,7 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
       int32_t result = 0;
       if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
-      } else if (request_execution->last_retry == 1) {
+      } else if (request_execution->last_retry == 1 || request_execution->spe_retry == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
       }
       else
@@ -416,7 +436,9 @@ RequestExecution::RequestExecution(RequestHandler* request_handler)
     , num_retries_(0)
     , start_time_ns_(uv_hrtime()) {}
 
-void RequestExecution::on_execute_next(Timer* timer) { request_handler_->execute(); }
+void RequestExecution::on_execute_next(Timer* timer) {
+	request_handler_->execute_next();
+}
 
 void RequestExecution::on_retry_current_host() { retry_current_host(); }
 
@@ -434,6 +456,10 @@ void RequestExecution::retry_current_host() {
 
 void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
+//  printf("retry_next_host... failover_count:%d, running_executions_:%d\n",
+//		  request_handler_->future_->failover_count, request_handler_->running_executions_);
+  if (request_handler_->running_executions_ > 1)
+	  return;
   request_handler_->future_->failover_count += 1;
   if (request_handler_->future_->failover_count == 2) {
 	  request_handler_->deadline = 0;
@@ -453,6 +479,8 @@ void RequestExecution::on_write(Connection* connection) {
   }
   request_handler_->start_request(connection->loop(), RequestHandler::Protected(), this);
   if (request()->is_idempotent()) {
+	if (request_handler_->future_->failover_count > 0)
+		return;
     int64_t timeout = request_handler_->next_execution(current_host_, RequestHandler::Protected());
     if (timeout == 0) {
       request_handler_->execute();
