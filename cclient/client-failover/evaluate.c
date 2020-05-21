@@ -22,8 +22,8 @@ void on_result(CassFuture* result_future, void* data) {
       clock_gettime(CLOCK_MONOTONIC, &end);
 
       diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-      printf("%llu  +%d  -%d--%d---%d\n", (long long unsigned int) diff, failover_count,
-             server_id[0], server_id[1], server_id[2]);
+//      printf("%llu  +%d  -%d--%d---%d\n", (long long unsigned int) diff, failover_count,
+//             server_id[0], server_id[1], server_id[2]);
       /* Retrieve result set and get the first row */
 /*      const CassResult* result = cass_future_get_result(result_future);
       const CassRow* row = cass_result_first_row(result);
@@ -58,7 +58,7 @@ void *read_thread(void *vargp) {
 //    const char* query = "SELECT release_version FROM system.local";
     int i = 0;
     // printf("Main read_thread before LOOP\n");
-    for (i = 0; i < 32500; i++) {
+    for (i = 0; i < 62500; i++) {
       const char* query = "SELECT name FROM cassDB.users WHERE id = 0df218dd-10fa-11ea-bf01-54271e04ce91";
       CassStatement* statement = cass_statement_new(query, 0);
       struct timespec *start = malloc(sizeof(struct timespec));
@@ -98,6 +98,8 @@ int main(int argc, char* argv[]) {
 //  cass_cluster_set_whitelist_filtering(cluster, whilelist_hosts);
 
   cass_cluster_set_num_threads_io(cluster, 2);
+
+  cass_cluster_set_connection_heartbeat_interval(cluster, 0);
 
 //  cass_cluster_set_core_connections_per_host(cluster, 2);
 
