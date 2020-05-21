@@ -88,13 +88,14 @@ int main(int argc, char* argv[]) {
 //  char* hosts = "heavy-client.cass-5n.ucare.emulab.net";
   char* hosts = argv[1];
   char* whilelist_hosts = argv[1];
+  int timeout = atoi(argv[2]);
 
   // printf("Main before cass_cluster_set_contact_points\n");
 
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
 
-  cass_int64_t constant_delay_ms = 3;
+  cass_int64_t constant_delay_ms = timeout;
 
   int max_speculative_executions = 1;
 
