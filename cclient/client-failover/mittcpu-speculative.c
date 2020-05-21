@@ -108,6 +108,8 @@ int main(int argc, char* argv[]) {
 
   cass_cluster_set_num_threads_io(cluster, 2);
 
+  cass_cluster_set_connection_heartbeat_interval(cluster, 0);
+
 //  cass_cluster_set_core_connections_per_host(cluster, 2);
 
 
