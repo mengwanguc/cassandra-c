@@ -21,7 +21,7 @@ void on_result(CassFuture* result_future, void* data) {
       clock_gettime(CLOCK_MONOTONIC, &end);
 
       diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-//      printf("%llu\n", (long long unsigned int) diff);
+      printf("%llu\n", (long long unsigned int) diff);
       /* Retrieve result set and get the first row */
 /*      const CassResult* result = cass_future_get_result(result_future);
       const CassRow* row = cass_result_first_row(result);
@@ -56,7 +56,7 @@ void *read_thread(void *vargp) {
 //    const char* query = "SELECT release_version FROM system.local";
     int i = 0;
     // printf("Main read_thread before LOOP\n");
-    for (i = 0; i < 62500; i++) {
+    for (i = 0; i < 32500; i++) {
       const char* query = "SELECT name FROM cassDB.users WHERE id = 0df218dd-10fa-11ea-bf01-54271e04ce91";
       CassStatement* statement = cass_statement_new(query, 0);
       cass_statement_set_is_idempotent(statement, cass_true);
@@ -88,13 +88,14 @@ int main(int argc, char* argv[]) {
 //  char* hosts = "heavy-client.cass-5n.ucare.emulab.net";
   char* hosts = argv[1];
   char* whilelist_hosts = argv[1];
+  int timeout = atoi(argv[2]);
 
   // printf("Main before cass_cluster_set_contact_points\n");
 
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
 
-  cass_int64_t constant_delay_ms = 3;
+  cass_int64_t constant_delay_ms = timeout;
 
   int max_speculative_executions = 1;
 
