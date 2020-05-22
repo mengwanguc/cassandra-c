@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
 
-  cass_int64_t constant_delay_ms = 3;
+  cass_int64_t constant_delay_ms = 2;
 
   int max_speculative_executions = 1;
 
