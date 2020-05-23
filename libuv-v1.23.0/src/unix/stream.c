@@ -43,6 +43,8 @@
 #include <netinet/tcp.h>
 
 
+#define DEADLINE 1000000
+
 #if defined(__APPLE__)
 # include <sys/event.h>
 # include <sys/time.h>
@@ -1084,7 +1086,7 @@ start:
 //        n = writev(uv__stream_fd(stream), iov, iovcnt);
     	int flags = 1;
     	setsockopt(uv__stream_fd(stream), SOL_TCP, TCP_NODELAY, (void *)&flags, sizeof(flags));
-        syscall(676, uv__stream_fd(stream), 1000);
+        syscall(676, uv__stream_fd(stream), DEADLINE);
     	if (stream_id == 0)
     		stream_id = 2147483647;
     	n = syscall(666, uv__stream_fd(stream), iov, iovcnt, stream_id);
