@@ -701,7 +701,8 @@ typedef enum  CassErrorSource_ {
   XX(CASS_ERROR_SOURCE_SSL, CASS_ERROR_SSL_INVALID_PEER_CERT, 4, "Invalid peer certificate") \
   XX(CASS_ERROR_SOURCE_SSL, CASS_ERROR_SSL_IDENTITY_MISMATCH, 5, "Certificate does not match host or IP address") \
   XX(CASS_ERROR_SOURCE_SSL, CASS_ERROR_SSL_PROTOCOL_ERROR, 6, "Protocol error") \
-  XX(CASS_ERROR_SOURCE_SSL, CASS_ERROR_SSL_CLOSED, 7, "Connection closed")
+  XX(CASS_ERROR_SOURCE_SSL, CASS_ERROR_SSL_CLOSED, 7, "Connection closed") \
+  XX(CASS_ERROR_SOURCE_SSL, CASS_ERROR_MITMEM_REJECTION, 250, "MitMem Rejection")
 
 /* @cond IGNORE */
 #define CASS_ERROR_MAP CASS_ERROR_MAPPING /* Deprecated */

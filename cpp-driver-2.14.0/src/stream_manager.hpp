@@ -68,6 +68,7 @@ public:
   bool get(int stream, T& output) {
     typename PendingMap::iterator i = pending_.find(stream);
     if (i != pending_.end()) {
+      last_received_stream_ = stream;
       output = i->second;
       return true;
     }
@@ -144,6 +145,10 @@ private:
   size_t offset_;
   Vector<word_t> words_;
   PendingMap pending_;
+
+public:
+  int last_received_stream_;
+  int last_acquired_stream_;
 
 private:
   DISALLOW_COPY_AND_ASSIGN(StreamManager);

@@ -68,6 +68,9 @@ String opcode_to_string(int opcode) {
       return "CQL_OPCODE_AUTH_RESPONSE";
     case CQL_OPCODE_AUTH_SUCCESS:
       return "CQL_OPCODE_AUTH_SUCCESS";
+    case CQL_ERROR_MITMEM_REJECTION:
+      return "CQL_ERROR_MITMEM_REJECTION";
+
   };
   assert(false);
   return "";

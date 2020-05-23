@@ -209,7 +209,16 @@ void RequestHandler::execute() {
 	  request_execution->failover_host_ = request_execution->current_host_;
 	  request_execution->next_host();
   }
-  internal_retry(request_execution.get());
+
+  if (finished_bootstrapping_ == 0)
+    finished_bootstrapping_ = 1;
+
+    if (retrying_next_host_ && finished_bootstrapping_){
+    printf("WRITE REQ XX to 10.1.1.2 (but directly retry to _next_host_) \n");
+    request_execution->on_retry_next_host();
+  }else{
+    internal_retry(request_execution.get());
+  }
 }
 
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
@@ -408,9 +417,10 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
 RequestExecution::RequestExecution(RequestHandler* request_handler)
     : RequestCallback(request_handler->wrapper())
     , request_handler_(request_handler)
-    , current_host_(request_handler->next_host(RequestHandler::Protected()))
     , num_retries_(0)
-    , start_time_ns_(uv_hrtime()) {}
+    , start_time_ns_(uv_hrtime()) {
+      current_host_ = request_handler->next_host(RequestHandler::Protected());
+    }
 
 void RequestExecution::on_execute_next(Timer* timer) { request_handler_->execute(); }
 
@@ -477,6 +487,10 @@ void RequestExecution::on_set(ResponseMessage* response) {
 //      printf("	CQL_OPCODE_MITTCPU_EBUSY in on_set...\n");
       on_mittcpu_response(connection, response);
       break;
+    case CQL_ERROR_MITMEM_REJECTION:
+      // LOG_DEBUG(" CQL_ERROR_MITMEM_REJECTION\n\t\t ERRORR Handled Correctly by request_handler_ CQL_ERROR_MITMEM_REJECTION\n\t\t Should retry when receve this \n");
+      on_error_response(connection, response);
+      break;
     default:
       connection->defunct();
       set_error(CASS_ERROR_LIB_UNEXPECTED_RESPONSE, "Unexpected response");
@@ -486,7 +500,19 @@ void RequestExecution::on_set(ResponseMessage* response) {
 
 void RequestExecution::on_error(CassError code, const String& message) {
   if (current_host_) current_host_->decrement_inflight_requests();
-  set_error(code, message);
+
+  printf("RequestExecution::on_error %d\n", code);
+
+  if( code == 50331898){
+      // 50331898 is the code for CASS_ERROR_MITMEM_REJECTION
+  //   LOG_DEBUG(" RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR RETRY!!!!\n");
+  //   LOG_ERROR("CQL_ERROR_MITMEM_REJECTION\n\t\tQuery sent to bootstrapping host %s. Retrying on the next host...",
+  //             connection->address_string().c_str());
+    printf("HOLLAAA\n");
+    retry_next_host();
+    return; // Done
+  }
+  set_error(code, message); 
 }
 
 void RequestExecution::notify_result_metadata_changed(const Request* request,
@@ -585,8 +611,15 @@ void RequestExecution::on_result_response(Connection* connection, ResponseMessag
 }
 
 void RequestExecution::on_error_response(Connection* connection, ResponseMessage* response) {
-  ErrorResponse* error = static_cast<ErrorResponse*>(response->response_body().get());
+  // Handle MitMem Rejection here
+  if( response->opcode() == CQL_ERROR_MITMEM_REJECTION){
+    LOG_DEBUG(" CQL_ERROR_MITMEM_REJECTION RETRY!!!! %d\n",response->stream() );
+    // printf("RequestExecution::on_error_response CQL_ERROR_MITMEM_REJECTION\n\t\tQuery sent to bootstrapping host %s. Retrying on the next host...\n", connection->address_string().c_str());
+    retry_next_host();
+    return; // Done
+  }
 
+  ErrorResponse* error = static_cast<ErrorResponse*>(response->response_body().get());
   RetryPolicy::RetryDecision decision = RetryPolicy::RetryDecision::return_error();
 
   switch (error->code()) {

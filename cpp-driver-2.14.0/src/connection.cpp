@@ -26,6 +26,9 @@
 using namespace datastax;
 using namespace datastax::internal::core;
 
+int datastax::internal::core::retrying_next_host_ = 0;
+int datastax::internal::core::finished_bootstrapping_ = 0;
+
 namespace datastax { namespace internal { namespace core {
 
 /**
@@ -54,13 +57,47 @@ void HeartbeatCallback::on_internal_set(ResponseMessage* response) {
 }
 
 void HeartbeatCallback::on_internal_error(CassError code, const String& message) {
-  LOG_WARN("An error occurred on host %s during a heartbeat request: %s",
-           connection_->host_->address_string().c_str(), message.c_str());
+  char buffer[26];
+  int millisec;
+  struct tm* tm_info;
+  struct timeval tv;
+
+  gettimeofday(&tv, NULL);
+
+  millisec = lrint(tv.tv_usec/1000.0); // Round to nearest millisec
+  if (millisec>=1000) { // Allow for rounding up to nearest second
+    millisec -=1000;
+    tv.tv_sec++;
+  }
+
+  tm_info = localtime(&tv.tv_sec);
+
+  strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+
+  LOG_WARN("An error occurred on host %s during a heartbeat request: %s time %s.%03d\n" ,
+           connection_->host_->address_string().c_str(), message.c_str(),buffer, millisec);
   connection_->heartbeat_outstanding_ = false;
 }
 
 void HeartbeatCallback::on_internal_timeout() {
-  LOG_WARN("Heartbeat request timed out on host %s", connection_->host_->address_string().c_str());
+  char buffer[26];
+  int millisec;
+  struct tm* tm_info;
+  struct timeval tv;
+
+  gettimeofday(&tv, NULL);
+
+  millisec = lrint(tv.tv_usec/1000.0); // Round to nearest millisec
+  if (millisec>=1000) { // Allow for rounding up to nearest second
+    millisec -=1000;
+    tv.tv_sec++;
+  }
+
+  tm_info = localtime(&tv.tv_sec);
+
+  strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+
+  LOG_WARN("Heartbeat request timed out on host %s time %s.%03d\n", connection_->host_->address_string().c_str(), buffer, millisec);
   connection_->heartbeat_outstanding_ = false;
 }
 
@@ -122,9 +159,9 @@ Connection::Connection(const Socket::Ptr& socket, const Host::Ptr& host,
     , protocol_version_(protocol_version)
     , idle_timeout_secs_(idle_timeout_secs)
     , heartbeat_interval_secs_(heartbeat_interval_secs)
-    , heartbeat_outstanding_(false) {
+    , heartbeat_outstanding_(false)
+    , pending_streams_(createQueue()) {
   inc_ref(); // For the event loop
-  host_->increment_connection_count();
 }
 
 Connection::~Connection() { host_->decrement_connection_count(); }
@@ -151,9 +188,9 @@ int32_t Connection::write(const RequestCallback::Ptr& callback) {
   // Add to the inflight count after we've cleared all posssible errors.
   inflight_request_count_.fetch_add(1);
 
-  LOG_TRACE("Sending message type %s with stream %d on host %s",
-            opcode_to_string(callback->request()->opcode()).c_str(), stream,
-            host_->address_string().c_str());
+  if (callback->request()->opcode() == CQL_OPCODE_QUERY && strcmp(host_->address_string().c_str(), "10.1.1.5") == 0 ){
+    enQueue(pending_streams_, stream);
+  }
 
   callback->set_state(RequestCallback::REQUEST_STATE_WRITING);
 
@@ -246,6 +283,28 @@ void Connection::on_write(int status, RequestCallback* request) {
 }
 
 void Connection::on_read(const char* buf, size_t size) {
+  char buffer[26];
+  int millisec;
+  struct tm* tm_info;
+  struct timeval tv;
+
+  gettimeofday(&tv, NULL);
+
+  millisec = lrint(tv.tv_usec/1000.0); // Round to nearest millisec
+  if (millisec>=1000) { // Allow for rounding up to nearest second
+    millisec -=1000;
+    tv.tv_sec++;
+  }
+
+  tm_info = localtime(&tv.tv_sec);
+
+  strftime(buffer, 26, "%Y:%m:%d %H:%M:%S", tm_info);
+
+
+
+//  printf("Receive RESPONSE size %zu   from %s   time %s.%03d\n", size, host_->address_string().c_str(),buffer, millisec);
+
+
   listener_->on_read();
 
   const char* pos = buf;
@@ -255,21 +314,101 @@ void Connection::on_read(const char* buf, size_t size) {
   restart_terminate_timer();
 
   while (remaining != 0 && !socket_->is_closing()) {
-    ssize_t consumed = response_->decode(pos, remaining);
+    ssize_t consumed ;
+    if (strcmp(host_->address_string().c_str(), "10.1.1.2") == 0 ){
+      consumed = response_->decode_new(pos, remaining, stream_manager_.pending_streams() );
+    }else{
+      consumed = response_->decode(pos, remaining);
+    }
+
     if (consumed <= 0) {
-      LOG_ERROR("Error decoding/consuming message");
-      defunct();
-      continue;
+      if (finished_bootstrapping_ == 0){
+          // LOG_TRACE("Ignore the rejection during bootstrapping \n");
+          return;
+      }
+
+      int counter = 0;
+      int total_pending = pending_streams_->size;
+
+      // LOG_TRACE("~~~~~~~~~~~~~~~  : at Connection::on_read MUST retry to Server-B-2!! pending %d \n", total_pending);
+
+      retrying_next_host_ = 1;
+
+      int stream_id_int = deQueue(pending_streams_); 
+      uint16_t stream_id =  (uint16_t) ~((unsigned int) stream_id_int); 
+
+      while ( stream_id_int >= 0 ){ //total_pending - 1 ){ 
+
+        ScopedPtr<ResponseMessage> response(response_.release());
+        response_.reset(new ResponseMessage());
+
+        response->set_is_body_error(true);
+        uint8_t mitmem_error=250;
+        response->set_opcode(mitmem_error);
+
+        RequestCallback::Ptr callback ;
+
+        printf("~~~~~~~~~~~~~~~ %d :  retry stream %d   [%p]pending %d   time %s.%03d\n", counter, stream_id_int, (void*) pending_streams_, total_pending, buffer, millisec);
+
+        if (stream_manager_.get(stream_id_int, callback)) {
+
+          switch (callback->state()) {
+            case RequestCallback::REQUEST_STATE_READING:
+            // printf("  REQUEST_STATE_READING......... callback:%s\n", typeid(callback).name());
+              response->set_stream(stream_id);
+
+              pending_reads_.remove(callback.get());
+              stream_manager_.release(callback->stream());
+              inflight_request_count_.fetch_sub(1);
+              callback->set_state(RequestCallback::REQUEST_STATE_FINISHED);
+              callback->on_set(response.get());
+              break;
+
+            case RequestCallback::REQUEST_STATE_WRITING:
+              // printf("  REQUEST_STATE_READ_BEFORE_WRITE.........\n");
+              // There are cases when the read callback will happen
+              // before the write callback. If this happens we have
+              // to allow the write callback to finish the request.
+              callback->set_state(RequestCallback::REQUEST_STATE_READ_BEFORE_WRITE);
+              // Save the response for the write callback
+              callback->set_read_before_write_response(response.release()); // Transfer ownership
+              break;
+
+            default:
+              LOG_ERROR("  default......... callback:%s\n", typeid(callback).name());
+              LOG_ERROR("  callback State : %d \n", callback->state());
+              // pending_reads_.remove(callback.get());
+              // stream_manager_.release(callback->stream());
+              // inflight_request_count_.fetch_sub(1);
+              // callback->set_state(RequestCallback::REQUEST_STATE_FINISHED);
+              // callback->on_set(response.get());
+
+              assert(false && "Invalid request state after receiving response");
+              // break;
+              break;
+           }
+         } else {
+           LOG_ERROR("Invalid stream ID %d", stream_id);
+           // defunct();
+         }
+
+         // Updating the stream_id
+        stream_id_int = deQueue(pending_streams_); 
+        stream_id =  (uint16_t) ~((unsigned int) stream_id_int); 
+        counter += 1;
+      }
+      if (pending_streams_->size == 0)  
+        retrying_next_host_ = 0;
+      // retrying_next_host_ = 250;
+      return;
+
     }
 
     if (response_->is_body_ready()) {
       ScopedPtr<ResponseMessage> response(response_.release());
       response_.reset(new ResponseMessage());
 
-      LOG_TRACE("Consumed message type %s with stream %d, input %u, remaining %u on host %s",
-                opcode_to_string(response->opcode()).c_str(), static_cast<int>(response->stream()),
-                static_cast<unsigned int>(size), static_cast<unsigned int>(remaining),
-                host_->address_string().c_str());
+      deleteNode(pending_streams_, response->stream());
 
       if (response->stream() < 0) {
         if (response->opcode() == CQL_OPCODE_EVENT) {
@@ -286,12 +425,20 @@ void Connection::on_read(const char* buf, size_t size) {
         if (stream_manager_.get(response->stream(), callback)) {
           switch (callback->state()) {
             case RequestCallback::REQUEST_STATE_READING:
-              pending_reads_.remove(callback.get());
-              stream_manager_.release(callback->stream());
-              inflight_request_count_.fetch_sub(1);
-              callback->set_state(RequestCallback::REQUEST_STATE_FINISHED);
-              maybe_set_keyspace(response.get());
-              callback->on_set(response.get());
+              {
+ //               printf("RELEASE stream : %d \n", callback->stream());
+                pending_reads_.remove(callback.get());
+                stream_manager_.release(callback->stream());
+                inflight_request_count_.fetch_sub(1);
+                callback->set_state(RequestCallback::REQUEST_STATE_FINISHED);
+                maybe_set_keyspace(response.get());
+                ResponseMessage * response_msg = response.get();
+                // printf("Daniar at connection.cpp on_read       CALLING on_set , put the rejection here \n\t\t The response->opcode must be CQL_OPCODE_ERROR\n\t\t\t current response_msg->opcode() %d\n", response_msg->opcode());
+                // printf("\t\t\t\t opcode to string: %s\n", opcode_to_string(response_msg->opcode()).c_str());
+                // printf("response->stream : %d \n",response->stream());
+                callback->on_set(response_msg);
+              }
+
               break;
 
             case RequestCallback::REQUEST_STATE_WRITING:
@@ -308,9 +455,7 @@ void Connection::on_read(const char* buf, size_t size) {
               break;
           }
         } else {
-          LOG_ERROR("Invalid stream ID %d", response->stream());
-          defunct();
-          continue;
+            break;
         }
       }
     }
@@ -367,6 +512,8 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
 
 
 void Connection::on_close() {
+  freeAll(pending_streams_);
+  free(pending_streams_);
   heartbeat_timer_.stop();
   terminate_timer_.stop();
   while (!pending_reads_.is_empty()) {

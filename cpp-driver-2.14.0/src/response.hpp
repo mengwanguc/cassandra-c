@@ -95,11 +95,21 @@ public:
 
   uint8_t opcode() const { return opcode_; }
 
+  // MitMem
+  void set_opcode(uint8_t opcode) { opcode_ = opcode; }
+  void set_stream(int16_t stream) { stream_ = stream; }
+  void set_is_header_received(bool is_header_received) { is_header_received_ = is_header_received; }
+  void set_is_body_ready(bool is_body_ready) { is_body_ready_ = is_body_ready; }
+  void set_is_body_error(bool is_body_error) { is_body_error_ = is_body_error; }
+
+
   int16_t stream() const { return stream_; }
 
   const Response::Ptr& response_body() { return response_body_; }
 
   bool is_body_ready() const { return is_body_ready_; }
+
+  ssize_t decode_new(const char* input, size_t size, int pending_stream);
 
   ssize_t decode(const char* input, size_t size);
 
