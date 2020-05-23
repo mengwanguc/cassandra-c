@@ -43,7 +43,7 @@
 #include <netinet/tcp.h>
 
 
-#define DEADLINE 1000000
+#define DEADLINE 1000000 
 
 #if defined(__APPLE__)
 # include <sys/event.h>
