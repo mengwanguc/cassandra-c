@@ -435,7 +435,7 @@ void RequestExecution::retry_next_host() {
 	  next_host();
   else
 	  this->current_host_ = this->failover_host_;
-//  printf("	doing failover to next host!!!!!!\n");
+  printf("	doing failover to next host!!!!!!\n");
   retry_current_host();
 }
 
