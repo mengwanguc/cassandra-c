@@ -388,7 +388,7 @@ void Connection::on_read(const char* buf, size_t size) {
               break;
            }
          } else {
-           LOG_ERROR("Invalid stream ID %d", stream_id);
+           LOG_ERROR("Invalid stream ID %d", stream_id_int);
            // defunct();
          }
 
@@ -483,6 +483,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
     switch (callback->state()) {
       case RequestCallback::REQUEST_STATE_READING:
 //    	printf("	REQUEST_STATE_READING......... callback:%s\n", typeid(callback).name());
+        deleteNode(pending_streams_, stream_id);
         pending_reads_.remove(callback.get());
         stream_manager_.release(callback->stream());
         inflight_request_count_.fetch_sub(1);
