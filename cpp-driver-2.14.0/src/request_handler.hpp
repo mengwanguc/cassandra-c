@@ -287,7 +287,6 @@ public:
   void on_timeout(Timer* timer);
 
   int stream_id = 0;
-  Host::Ptr failover_host_;
   Host::Ptr current_host_;
 
 
