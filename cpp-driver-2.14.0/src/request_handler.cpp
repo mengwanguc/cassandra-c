@@ -204,7 +204,7 @@ void RequestHandler::execute() {
 //  std::cout << "RequestHandler::execute for host"
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
-  if (request_execution->current_host()->address_string().find("10.1.1.5") != std::string::npos){
+  if (request_execution->current_host()->address_string().find("10.1.1.2") != std::string::npos){
   } else {
 	  request_execution->failover_host_ = request_execution->current_host_;
 	  request_execution->next_host();

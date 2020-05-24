@@ -188,7 +188,7 @@ int32_t Connection::write(const RequestCallback::Ptr& callback) {
   // Add to the inflight count after we've cleared all posssible errors.
   inflight_request_count_.fetch_add(1);
 
-  if (callback->request()->opcode() == CQL_OPCODE_QUERY && strcmp(host_->address_string().c_str(), "10.1.1.5") == 0 ){
+  if (callback->request()->opcode() == CQL_OPCODE_QUERY && strcmp(host_->address_string().c_str(), "10.1.1.2") == 0 ){
     enQueue(pending_streams_, stream);
   }
 
