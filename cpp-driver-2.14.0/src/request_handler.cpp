@@ -204,11 +204,6 @@ void RequestHandler::execute() {
 //  std::cout << "RequestHandler::execute for host"
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
-  if (request_execution->current_host()->address_string().find("10.1.1.2") != std::string::npos){
-  } else {
-	  request_execution->failover_host_ = request_execution->current_host_;
-	  request_execution->next_host();
-  }
 
   if (finished_bootstrapping_ == 0)
     finished_bootstrapping_ = 1;
@@ -441,10 +436,7 @@ void RequestExecution::retry_current_host() {
 
 void RequestExecution::retry_next_host() {
 //  printf("	doing failover to next host!!!!!!\n");
-  if (!this->failover_host_)
-	  next_host();
-  else
-	  this->current_host_ = this->failover_host_;
+  next_host();
 //  printf("	doing failover to next host!!!!!!\n");
   retry_current_host();
 }
