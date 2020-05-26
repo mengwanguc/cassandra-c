@@ -143,6 +143,8 @@ public:
 
   void notify_write(Connection* connection, int stream);
 
+  int host_tried = 0;
+
 public:
   // Called to retry a request on a different connection
   virtual void on_retry_current_host() = 0;

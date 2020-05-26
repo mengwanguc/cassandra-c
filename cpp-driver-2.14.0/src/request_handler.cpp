@@ -229,7 +229,10 @@ void RequestHandler::start_request(uv_loop_t* loop, Protected, RequestExecution*
   }
 }
 
-Host::Ptr RequestHandler::next_host(Protected) { return query_plan_->compute_next(); }
+Host::Ptr RequestHandler::next_host(Protected) {
+  host_tried += 1;
+  return query_plan_->compute_next(); 
+}
 
 int64_t RequestHandler::next_execution(const Host::Ptr& current_host, Protected) {
   return execution_plan_->next_execution(current_host);
@@ -357,6 +360,8 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
         manager_->find_least_busy(request_execution->current_host()->address());
     if (connection) {
       int32_t result = 0;
+      request_execution->host_tried = host_tried;
+      printf("sendign request... host_tried:%d\n", host_tried);
       if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
       }
@@ -430,7 +435,9 @@ void RequestExecution::retry_current_host() {
   // Reset the request so it can be executed again
   set_state(REQUEST_STATE_NEW);
 
-  request_handler_->deadline = 0;
+//  request_handler_->deadline = 0;
+//  printf("retrying current host so set not cancellable....\n");
+
   request_handler_->retry(this, RequestHandler::Protected());
 }
 
@@ -696,39 +703,7 @@ void RequestExecution::on_error_response(Connection* connection, ResponseMessage
 
 
 void RequestExecution::on_mittcpu_response(Connection* connection, ResponseMessage* response) {
-  ErrorResponse* error = static_cast<ErrorResponse*>(response->response_body().get());
-
-  RetryPolicy::RetryDecision decision = RetryPolicy::RetryDecision::return_error();
-
-  if (retry_policy()) {
-    decision = retry_policy()->on_unavailable(
-        request(), CASS_CONSISTENCY_ONE, 1, 0, num_retries_);
-  }
-
-
-  // Process retry decision
-  switch (decision.type()) {
-    case RetryPolicy::RetryDecision::RETURN_ERROR:
-      set_error_with_error_response(
-          response->response_body(),
-          static_cast<CassError>(CASS_ERROR(CASS_ERROR_SOURCE_SERVER, CQL_ERROR_UNAVAILABLE)),
-          error->message().to_string());
-      break;
-
-    case RetryPolicy::RetryDecision::RETRY:
-      set_retry_consistency(decision.retry_consistency());
-      if (decision.retry_current_host()) {
-        retry_current_host();
-      } else {
-        retry_next_host();
-      }
-      num_retries_++;
-      break;
-
-    case RetryPolicy::RetryDecision::IGNORE:
-      set_response(Response::Ptr(new ResultResponse()));
-      break;
-  }
+  retry_next_host();
 }
 
 

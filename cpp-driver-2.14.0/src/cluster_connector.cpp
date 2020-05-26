@@ -171,6 +171,8 @@ void ClusterConnector::on_resolve(ClusterMetadataResolver* resolver) {
 
   if (resolved_contact_points.empty()) {
     error_code_ = CLUSTER_ERROR_NO_HOSTS_AVAILABLE;
+
+    printf("@meng: unable to connect...\n");
     error_message_ = "Unable to connect to any contact points";
     finish();
     return;

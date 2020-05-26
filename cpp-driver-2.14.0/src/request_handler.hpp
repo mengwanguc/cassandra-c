@@ -153,6 +153,7 @@ public:
   const Address& preferred_address() const { return preferred_address_; }
 
   int deadline;
+  int host_tried = 0;
 
 public:
   class Protected {

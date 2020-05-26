@@ -188,7 +188,7 @@ int32_t Connection::write(const RequestCallback::Ptr& callback) {
   // Add to the inflight count after we've cleared all posssible errors.
   inflight_request_count_.fetch_add(1);
 
-  if (callback->request()->opcode() == CQL_OPCODE_QUERY && strcmp(host_->address_string().c_str(), "10.1.1.2") == 0 ){
+  if (callback->request()->opcode() == CQL_OPCODE_QUERY){
     enQueue(pending_streams_, stream);
   }
 
@@ -211,6 +211,10 @@ int32_t Connection::write_and_flush_mittcpu(const RequestCallback::Ptr& callback
 	  socket_->flush_mittcpu(callback->stream());
 //	    printf("	Connection::write_and_flush_mittcpu callback stream:%d\n",
 //	    		callback->stream());
+    if (callback->host_tried < 9)
+       socket_->flush_mittcpu(callback->stream());
+    else
+      socket_->flush_mittcpu(-888);
   }
   return result;
 }
@@ -315,11 +319,7 @@ void Connection::on_read(const char* buf, size_t size) {
 
   while (remaining != 0 && !socket_->is_closing()) {
     ssize_t consumed ;
-    if (strcmp(host_->address_string().c_str(), "10.1.1.2") == 0 ){
       consumed = response_->decode_new(pos, remaining, stream_manager_.pending_streams() );
-    }else{
-      consumed = response_->decode(pos, remaining);
-    }
 
     if (consumed <= 0) {
       if (finished_bootstrapping_ == 0){
