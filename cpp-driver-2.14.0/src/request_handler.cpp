@@ -216,6 +216,21 @@ void RequestHandler::execute() {
   }
 }
 
+void RequestHandler::execute_next() {
+ //  printf("next_execution... failover_count:%d, running_executions_:%d\n",
+ //		  future_->failover_count, running_executions_);
+   if (host_tried >= 10)
+	   return;
+
+ //  return;
+   RequestExecution::Ptr request_execution(new RequestExecution(this));
+   running_executions_++;
+
+ //  for (int i = 0; i < 3; i++)
+ //    future_->server_id[i] = 0;
+   internal_retry(request_execution.get());
+ }
+
 void RequestHandler::retry(RequestExecution* request_execution, Protected) {
   internal_retry(request_execution);
 }
@@ -422,7 +437,7 @@ RequestExecution::RequestExecution(RequestHandler* request_handler)
       current_host_ = request_handler->next_host(RequestHandler::Protected());
     }
 
-void RequestExecution::on_execute_next(Timer* timer) { request_handler_->execute(); }
+void RequestExecution::on_execute_next(Timer* timer) { request_handler_->execute_next(); }
 
 void RequestExecution::on_retry_current_host() { retry_current_host(); }
 

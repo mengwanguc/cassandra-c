@@ -146,6 +146,7 @@ public:
             RequestListener* listener);
 
   void execute();
+  void execute_next();
 
   const RequestWrapper& wrapper() const { return wrapper_; }
   const Request* request() const { return wrapper_.request().get(); }
