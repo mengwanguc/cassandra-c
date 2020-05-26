@@ -328,7 +328,7 @@ void Connection::on_read(const char* buf, size_t size) {
       }
 
       int counter = 0;
-      int total_pending = pending_streams_->size;
+//      int total_pending = pending_streams_->size;
 
       // LOG_TRACE("~~~~~~~~~~~~~~~  : at Connection::on_read MUST retry to Server-B-2!! pending %d \n", total_pending);
 
