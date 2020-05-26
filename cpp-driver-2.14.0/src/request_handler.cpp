@@ -209,7 +209,7 @@ void RequestHandler::execute() {
     finished_bootstrapping_ = 1;
 
     if (retrying_next_host_ && finished_bootstrapping_){
-    printf("WRITE REQ XX to 10.1.1.2 (but directly retry to _next_host_) \n");
+//    printf("WRITE REQ XX to 10.1.1.2 (but directly retry to _next_host_) \n");
     request_execution->on_retry_next_host();
   }else{
     internal_retry(request_execution.get());
@@ -376,7 +376,7 @@ void RequestHandler::internal_retry(RequestExecution* request_execution) {
     if (connection) {
       int32_t result = 0;
       request_execution->host_tried = host_tried;
-      printf("sendign request... host_tried:%d\n", host_tried);
+//      printf("sendign request... host_tried:%d\n", host_tried);
       if (request_execution->request_handler_->deadline == 1) {
     	  result = connection->write_and_flush_mittcpu(request_execution);
       }

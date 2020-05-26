@@ -348,7 +348,7 @@ void Connection::on_read(const char* buf, size_t size) {
 
         RequestCallback::Ptr callback ;
 
-        printf("~~~~~~~~~~~~~~~ %d :  retry stream %d   [%p]pending %d   time %s.%03d\n", counter, stream_id_int, (void*) pending_streams_, total_pending, buffer, millisec);
+//        printf("~~~~~~~~~~~~~~~ %d :  retry stream %d   [%p]pending %d   time %s.%03d\n", counter, stream_id_int, (void*) pending_streams_, total_pending, buffer, millisec);
 
         if (stream_manager_.get(stream_id_int, callback)) {
 
@@ -492,7 +492,7 @@ void Connection::on_read_mittcpu(const char* buf, size_t size, int stream_id) {
         break;
 
       case RequestCallback::REQUEST_STATE_WRITING:
-      	printf("	REQUEST_STATE_READ_BEFORE_WRITE.........\n");
+//      	printf("	REQUEST_STATE_READ_BEFORE_WRITE.........\n");
         // There are cases when the read callback will happen
         // before the write callback. If this happens we have
         // to allow the write callback to finish the request.
