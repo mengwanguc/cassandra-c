@@ -322,6 +322,7 @@ void Connection::on_read(const char* buf, size_t size) {
       consumed = response_->decode_new(pos, remaining, stream_manager_.pending_streams() );
 
     if (consumed <= 0) {
+      return;
       if (finished_bootstrapping_ == 0){
           // LOG_TRACE("Ignore the rejection during bootstrapping \n");
           return;
