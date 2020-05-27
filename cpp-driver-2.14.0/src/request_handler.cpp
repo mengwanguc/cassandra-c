@@ -219,8 +219,8 @@ void RequestHandler::execute() {
 void RequestHandler::execute_next() {
  //  printf("next_execution... failover_count:%d, running_executions_:%d\n",
  //		  future_->failover_count, running_executions_);
-   if (host_tried >= 10)
-	   return;
+//   if (host_tried >= 10)
+//	   return;
 
  //  return;
    RequestExecution::Ptr request_execution(new RequestExecution(this));
@@ -245,7 +245,6 @@ void RequestHandler::start_request(uv_loop_t* loop, Protected, RequestExecution*
 }
 
 Host::Ptr RequestHandler::next_host(Protected) {
-  host_tried += 1;
   return query_plan_->compute_next(); 
 }
 
@@ -457,6 +456,7 @@ void RequestExecution::retry_current_host() {
 }
 
 void RequestExecution::retry_next_host() {
+  host_tried += 1;
 //  printf("	doing failover to next host!!!!!!\n");
   next_host();
 //  printf("	doing failover to next host!!!!!!\n");
