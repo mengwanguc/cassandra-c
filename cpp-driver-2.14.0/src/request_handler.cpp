@@ -225,21 +225,13 @@ void RequestHandler::execute() {
   if (request_execution->current_host()->address_string().compare("10.1.1.11") == 0)
   	  printf("J\n");
 */
-  if (finished_bootstrapping_ == 0)
-    finished_bootstrapping_ = 1;
-
-    if (retrying_next_host_ && finished_bootstrapping_){
-    printf("Retry to _next_host_) at the beginning\n");
-    request_execution->on_retry_next_host();
-  }else{
-    internal_retry(request_execution.get());
-  }
+  internal_retry(request_execution.get());
 }
 
 void RequestHandler::execute_next() {
 //   printf("next_execution... host_tried:%d, running_executions_:%d\n",
 // 		  host_tried, running_executions_);
-   if (host_tried + running_executions_ >= 9)
+   if (host_tried + running_executions_ >= 8)
 	   return;
 
  //  return;
