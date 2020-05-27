@@ -204,6 +204,8 @@ void RequestHandler::execute() {
 //  std::cout << "RequestHandler::execute for host"
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
+  if (request_execution->current_host()->address_string().compare("10.1.1.2"))
+	  printf("A\n");
 
   if (finished_bootstrapping_ == 0)
     finished_bootstrapping_ = 1;
