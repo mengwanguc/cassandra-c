@@ -204,7 +204,7 @@ void RequestHandler::execute() {
 //  std::cout << "RequestHandler::execute for host"
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
-  if (request_execution->current_host()->address_string().compare("10.1.1.2") == 0)
+/*  if (request_execution->current_host()->address_string().compare("10.1.1.2") == 0)
 	  printf("A\n");
   if (request_execution->current_host()->address_string().compare("10.1.1.3") == 0)
   	  printf("B\n");
@@ -224,7 +224,7 @@ void RequestHandler::execute() {
   	  printf("I\n");
   if (request_execution->current_host()->address_string().compare("10.1.1.11") == 0)
   	  printf("J\n");
-
+*/
   if (finished_bootstrapping_ == 0)
     finished_bootstrapping_ = 1;
 
@@ -237,10 +237,10 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::execute_next() {
-   printf("next_execution... host_tried:%d, running_executions_:%d\n",
- 		  host_tried, running_executions_);
-//   if (host_tried >= 10)
-//	   return;
+//   printf("next_execution... host_tried:%d, running_executions_:%d\n",
+// 		  host_tried, running_executions_);
+   if (host_tried + running_executions_ >= 9)
+	   return;
 
  //  return;
    RequestExecution::Ptr request_execution(new RequestExecution(this));
