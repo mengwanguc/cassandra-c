@@ -206,6 +206,24 @@ void RequestHandler::execute() {
 //		  << std::endl;
   if (request_execution->current_host()->address_string().compare("10.1.1.2"))
 	  printf("A\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.3"))
+  	  printf("B\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.4"))
+  	  printf("C\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.5"))
+  	  printf("D\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.6"))
+  	  printf("E\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.7"))
+  	  printf("F\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.8"))
+  	  printf("G\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.9"))
+  	  printf("H\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.10"))
+  	  printf("I\n");
+  if (request_execution->current_host()->address_string().compare("10.1.1.11"))
+  	  printf("J\n");
 
   if (finished_bootstrapping_ == 0)
     finished_bootstrapping_ = 1;
