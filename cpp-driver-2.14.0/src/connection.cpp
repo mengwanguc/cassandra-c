@@ -211,7 +211,7 @@ int32_t Connection::write_and_flush_mittcpu(const RequestCallback::Ptr& callback
 	  socket_->flush_mittcpu(callback->stream());
 //	    printf("	Connection::write_and_flush_mittcpu callback stream:%d\n",
 //	    		callback->stream());
-    if (callback->host_tried < 2)
+    if (callback->host_tried < 9)
        socket_->flush_mittcpu(callback->stream());
     else
       socket_->flush_mittcpu(-888);
