@@ -204,32 +204,32 @@ void RequestHandler::execute() {
 //  std::cout << "RequestHandler::execute for host"
 //		  << request_execution->current_host()->address_string()
 //		  << std::endl;
-  if (request_execution->current_host()->address_string().compare("10.1.1.2"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.2") == 0)
 	  printf("A\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.3"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.3") == 0)
   	  printf("B\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.4"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.4") == 0)
   	  printf("C\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.5"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.5") == 0)
   	  printf("D\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.6"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.6") == 0)
   	  printf("E\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.7"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.7") == 0)
   	  printf("F\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.8"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.8") == 0)
   	  printf("G\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.9"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.9") == 0)
   	  printf("H\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.10"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.10") == 0)
   	  printf("I\n");
-  if (request_execution->current_host()->address_string().compare("10.1.1.11"))
+  if (request_execution->current_host()->address_string().compare("10.1.1.11") == 0)
   	  printf("J\n");
 
   if (finished_bootstrapping_ == 0)
     finished_bootstrapping_ = 1;
 
     if (retrying_next_host_ && finished_bootstrapping_){
-//    printf("WRITE REQ XX to 10.1.1.2 (but directly retry to _next_host_) \n");
+    printf("Retry to _next_host_) at the beginning\n");
     request_execution->on_retry_next_host();
   }else{
     internal_retry(request_execution.get());
@@ -237,8 +237,8 @@ void RequestHandler::execute() {
 }
 
 void RequestHandler::execute_next() {
- //  printf("next_execution... failover_count:%d, running_executions_:%d\n",
- //		  future_->failover_count, running_executions_);
+   printf("next_execution... host_tried:%d, running_executions_:%d\n",
+ 		  host_tried, running_executions_);
 //   if (host_tried >= 10)
 //	   return;
 
