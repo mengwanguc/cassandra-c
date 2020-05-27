@@ -221,7 +221,34 @@ DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, C
     , hosts_(policy_->local_dc_live_hosts_)
     , local_remaining_(get_hosts_size(hosts_))
     , remote_remaining_(0)
-    , index_(0) {}
+    {
+	    int max = 1024;
+	    int min = 1;
+        int range = max - min + 1;
+        int num = rand() % range + min;
+        if (1 <= num < 2) {
+            index_ = 0;
+        } else if (2 <= num < 4) {
+        	index_ = 1;
+        } else if (4 <= num < 8) {
+        	index_ = 2;
+        } else if (8 <= num < 16) {
+        	index_ = 3;
+        } else if (16 <= num < 32) {
+        	index_ = 4;
+        } else if (32 <= num < 64) {
+        	index_ = 5;
+        } else if (64 <= num < 128) {
+        	index_ = 6;
+        } else if (128 <= num < 256) {
+        	index_ = 7;
+        } else if (256 <= num < 512) {
+        	index_ = 8;
+        } else {
+        	index_ = 9;
+        }
+        server_index = index_;
+    }
 
 Host::Ptr DCAwarePolicy::DCAwareQueryPlan::compute_next() {
   while (local_remaining_ > 0) {

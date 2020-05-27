@@ -66,6 +66,8 @@ public:
   virtual ~QueryPlan() {}
   virtual Host::Ptr compute_next() = 0;
 
+  int server_index = 0;
+
   bool compute_next(Address* address) {
     Host::Ptr host = compute_next();
     if (host) {

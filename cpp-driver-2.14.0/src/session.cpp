@@ -323,7 +323,7 @@ Future::Ptr Session::execute(const Request::ConstPtr& request, const Address* pr
   RequestHandler::Ptr request_handler(
       new RequestHandler(request, future, metrics(), preferred_address));
 
-  request_handler->deadline = 1;
+  request_handler->deadline = 0;
 
   if (request_handler->request()->opcode() == CQL_OPCODE_EXECUTE) {
     const ExecuteRequest* execute = static_cast<const ExecuteRequest*>(request_handler->request());
