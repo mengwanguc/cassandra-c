@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
+#include <time.h>
 #include "dc_aware_policy.hpp"
 
 #include "logger.hpp"
