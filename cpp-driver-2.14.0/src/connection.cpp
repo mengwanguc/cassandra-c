@@ -319,7 +319,7 @@ void Connection::on_read(const char* buf, size_t size) {
 
   while (remaining != 0 && !socket_->is_closing()) {
     ssize_t consumed ;
-      consumed = response_->decode_new(pos, remaining, stream_manager_.pending_streams() );
+      consumed = response_->decode(pos, remaining );
 
     if (consumed <= 0) {
       if (finished_bootstrapping_ == 0){

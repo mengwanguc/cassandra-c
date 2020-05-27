@@ -285,9 +285,9 @@ DCAwarePolicy::DCAwareQueryPlan::DCAwareQueryPlan(const DCAwarePolicy* policy, C
     , local_remaining_(get_hosts_size(hosts_))
     , remote_remaining_(0)
     {
-            index_ = pickZipfian05();
+            index_ = pickPareto01();
 //              index_ = pickUniform();
-              printf("s-%lu\n", index_);
+//              printf("s-%lu\n", index_);
     }
 Host::Ptr DCAwarePolicy::DCAwareQueryPlan::compute_next() {
   while (local_remaining_ > 0) {
